@@ -10,7 +10,7 @@ scalacOptions ++= Seq("-target:jvm-1.7", "-deprecation", "-feature", "-unchecked
 javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked")
 
 val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.1.0")
-val protocVersion = "-v" + protobufVersion.replace(".", "")
+val protocVersion = Map("2.6.1" -> "-v261", "3.0.2" -> "-v310", "3.1.0" -> "-v310")(protobufVersion)
 
 val guavaVersion = "19.0"
 val jacksonVersion = "2.8.3"
