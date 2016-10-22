@@ -4,6 +4,7 @@ protobuf-generic
 [![Build Status](https://travis-ci.org/nevillelyh/protobuf-generic.svg?branch=master)](https://travis-ci.org/nevillelyh/protobuf-generic)
 [![codecov.io](https://codecov.io/github/nevillelyh/protobuf-generic/coverage.svg?branch=master)](https://codecov.io/github/nevillelyh/protobuf-generic?branch=master)
 [![GitHub license](https://img.shields.io/github/license/nevillelyh/protobuf-generic.svg)](./LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/me.lyh/protobuf-generic_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/me.lyh/protobuf-generic_2.11)
 
 Manipulate [Protocol Bufffers](https://developers.google.com/protocol-buffers/) schema and records in a generic manner without compiled classes, similar to [Avro](https://avro.apache.org/) `GenericRecord`.
 
