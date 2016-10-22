@@ -1,6 +1,7 @@
 syntax = "proto2";
 
-option java_package = "me.lyh.protobuf.generic.proto";
+package me.lyh.protobuf.generic.proto;
+
 option optimize_for = SPEED;
 
 enum Color {
