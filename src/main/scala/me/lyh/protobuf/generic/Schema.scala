@@ -9,23 +9,17 @@ import com.google.protobuf.Message
 import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
 
-case class Schema(name: String,
-                  messages: Map[String, MessageSchema],
-                  enums: Map[String, EnumSchema])
+case class Schema(name: String, messages: Map[String, MessageSchema], enums: Map[String, EnumSchema])
 
 sealed trait DescriptorSchema
-case class MessageSchema(name: String, fields: Map[String, Field]) extends DescriptorSchema
-case class EnumSchema(name: String, values: Map[String, String]) extends DescriptorSchema
+case class MessageSchema(name: String, fields: Map[Int, Field]) extends DescriptorSchema
+case class EnumSchema(name: String, values: Map[Int, String]) extends DescriptorSchema
 
-case class Field(id: Int, name: String,
-                 label: Label, `type`: FieldDescriptor.Type, packed: Boolean,
-                 schema: Option[String])
+case class Field(id: Int, name: String, label: Label, `type`: FieldDescriptor.Type, packed: Boolean, schema: Option[String])
 
 object Schema {
 
-  private val schemaMapper = new ObjectMapper().registerModule(DefaultScalaModule)
-
-  def fromJson(json: String): Schema = schemaMapper.readValue(json, classOf[Schema])
+  def fromJson(json: String): Schema = SchemaMapper.fromJson(json)
 
   def of[T <: Message : ClassTag]: Schema = {
     val descriptor = ProtobufType[T].descriptor
@@ -41,26 +35,26 @@ object Schema {
 
   private def toSchemaMap(descriptor: Descriptor): Map[String, DescriptorSchema] = {
     val (fields, schemas) = descriptor.getFields.asScala
-      .foldLeft(Map.empty[String, Field], Map.empty[String, DescriptorSchema]) { (z, fd) =>
+      .foldLeft(Map.empty[Int, Field], Map.empty[String, DescriptorSchema]) { (z, fd) =>
         val f = Field(fd.getNumber, fd.getName, getLabel(fd), fd.getType, fd.isPacked, None)
         fd.getType match {
           case FieldDescriptor.Type.MESSAGE =>
             val n = fd.getMessageType.getFullName
             val s = toSchemaMap(fd.getMessageType)
-            (z._1 + (f.id.toString -> f.copy(schema = Some(n))), z._2 ++ s)
+            (z._1 + (f.id -> f.copy(schema = Some(n))), z._2 ++ s)
           case FieldDescriptor.Type.ENUM =>
             val n = fd.getEnumType.getFullName
             val s = toEnumSchema(fd.getEnumType)
-            (z._1 + (f.id.toString -> f.copy(schema = Some(n))), z._2 + (s.name -> s))
+            (z._1 + (f.id -> f.copy(schema = Some(n))), z._2 + (s.name -> s))
           case _ =>
-            (z._1 + (f.id.toString -> f), z._2)
+            (z._1 + (f.id -> f), z._2)
         }
       }
     schemas + (descriptor.getFullName -> MessageSchema(descriptor.getFullName, fields))
   }
 
   private def toEnumSchema(ed: EnumDescriptor): EnumSchema = {
-    val values = ed.getValues.asScala.map(v => v.getNumber.toString -> v.getName).toMap
+    val values = ed.getValues.asScala.map(v => v.getNumber -> v.getName).toMap
     EnumSchema(ed.getFullName, values)
   }
 
@@ -68,6 +62,44 @@ object Schema {
     case LABEL_REQUIRED => Label.REQUIRED
     case LABEL_OPTIONAL => Label.OPTIONAL
     case LABEL_REPEATED => Label.REPEATED
+  }
+
+}
+
+private[generic] object SchemaMapper {
+
+  private val schemaMapper = new ObjectMapper().registerModule(DefaultScalaModule)
+
+  case class JSchema(name: String, messages: Iterable[JMessageSchema], enums: Iterable[JEnumSchema])
+  case class JMessageSchema(name: String, fields: Iterable[Field])
+  case class JEnumSchema(name: String, values: Map[String, Int])
+
+  def toJson(schema: Schema): String = {
+    val jSchema = JSchema(schema.name, schema.messages.values.map(toJMessageSchema), schema.enums.values.map(toJEnumSchema))
+    schemaMapper.writeValueAsString(jSchema)
+  }
+
+  def fromJson(json: String): Schema = {
+    val schema = schemaMapper.readValue(json, classOf[JSchema])
+    Schema(
+      schema.name,
+      schema.messages.map(m => m.name -> fromJMessageSchema(m)).toMap,
+      schema.enums.map(e => e.name -> fromJEnumSchema(e)).toMap)
+  }
+
+  private def fromJMessageSchema(schema: JMessageSchema): MessageSchema =
+    MessageSchema(schema.name, schema.fields.map(f => f.id -> f).toMap)
+
+  private def toJMessageSchema(schema: MessageSchema): JMessageSchema =
+    JMessageSchema(schema.name, schema.fields.values.toList.sortBy(_.id))
+
+  private def fromJEnumSchema(schema: JEnumSchema): EnumSchema =
+    EnumSchema(schema.name, schema.values.map(kv => kv._2 -> kv._1))
+
+  private def toJEnumSchema(schema: EnumSchema): JEnumSchema = {
+    val m = Map.newBuilder[String, Int]
+    m ++= schema.values.toList.sortBy(_._1).map(kv => kv._2 -> kv._1)
+    JEnumSchema(schema.name, m.result())
   }
 
 }

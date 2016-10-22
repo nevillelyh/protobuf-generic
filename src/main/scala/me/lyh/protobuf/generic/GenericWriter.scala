@@ -52,7 +52,7 @@ class GenericWriter(val schema: Schema) {
         out.writeByteArrayNoTag(BaseEncoding.base64().decode(value.toString))
       case Type.ENUM =>
         val enumMap = schema.enums(field.schema.get).values.map(kv => (kv._2, kv._1))
-        out.writeEnumNoTag(enumMap(value.toString).toInt)
+        out.writeEnumNoTag(enumMap(value.toString))
       case Type.MESSAGE =>
         val baos = new ByteArrayOutputStream()
         val bytesOut = CodedOutputStream.newInstance(baos)

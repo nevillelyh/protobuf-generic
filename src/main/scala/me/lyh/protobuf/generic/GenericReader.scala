@@ -44,7 +44,7 @@ class GenericReader(val schema: Schema) {
       case Type.BOOL => in.readBool()
       case Type.STRING => in.readString()
       case Type.BYTES => BaseEncoding.base64().encode(in.readByteArray())
-      case Type.ENUM => schema.enums(field.schema.get).values(in.readEnum().toString)
+      case Type.ENUM => schema.enums(field.schema.get).values(in.readEnum())
       case Type.MESSAGE =>
         val nestedIn = CodedInputStream.newInstance(in.readByteBuffer())
         read(nestedIn, schema.messages(field.schema.get))
@@ -55,7 +55,7 @@ class GenericReader(val schema: Schema) {
     while (!input.isAtEnd) {
       val tag = input.readTag()
       val id = WireFormat.getTagFieldNumber(tag)
-      val field = messageSchema.fields(id.toString)
+      val field = messageSchema.fields(id)
 
       if (field.label == Label.REPEATED) {
         if (!map.containsKey(id)) {
@@ -76,7 +76,7 @@ class GenericReader(val schema: Schema) {
     }
 
     val result = Maps.newLinkedHashMap[String, Any]()
-    map.asScala.foreach(kv => result.put(messageSchema.fields(kv._1.toString).name, kv._2))
+    map.asScala.foreach(kv => result.put(messageSchema.fields(kv._1).name, kv._2))
     result
   }
 
