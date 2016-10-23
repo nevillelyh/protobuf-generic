@@ -2,6 +2,7 @@ import sbtprotobuf.{ProtobufPlugin => PB}
 
 val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.1.0")
 val protocVersion = Map("2.6.1" -> "-v261", "3.0.2" -> "-v310", "3.1.0" -> "-v310")(protobufVersion)
+val isProto3 = protobufVersion.startsWith("3.")
 
 val guavaVersion = "19.0"
 val jacksonVersion = "2.8.3"
@@ -95,7 +96,17 @@ lazy val proto3Test: Project = Project(
   "proto3test",
   file("proto3test")
 ).settings(
-  commonSettings ++ noPublishSettings
+  commonSettings ++ noPublishSettings,
+  if (isProto3) proto3Settings else noProto3Settings
 ).dependsOn(
   core
+)
+
+val proto3Settings = Seq(
+  libraryDependencies ++= Seq(
+    "com.google.protobuf" % "protobuf-java-util" % protobufVersion % "test"
+  )
+)
+val noProto3Settings = Seq(
+  test := {}
 )
