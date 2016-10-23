@@ -9,11 +9,15 @@ import org.scalatest._
 
 class ProtobufTypeSpec extends FlatSpec with Matchers {
 
-  val pt = ProtobufType[Required]
-  val record = Records.required
+  val pt = ProtobufType[Optional]
+  val record = Records.optional
 
   "ProtobufType.descriptor" should "work" in {
-    pt.descriptor should equal (Required.getDescriptor)
+    pt.descriptor should equal (Optional.getDescriptor)
+  }
+
+  "ProtobufType.newBuilder" should "work" in {
+    pt.newBuilder().build() should equal (Optional.newBuilder().build())
   }
 
   "ProtobufType.parseFrom" should "support byte array" in {

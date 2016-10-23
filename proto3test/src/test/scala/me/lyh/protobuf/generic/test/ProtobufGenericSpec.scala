@@ -1,6 +1,7 @@
 package me.lyh.protobuf.generic.test
 
 import com.google.protobuf.Message
+import com.google.protobuf.util.JsonFormat
 import me.lyh.protobuf.generic._
 import me.lyh.protobuf.generic.proto.Schemas._
 import org.scalatest._
@@ -8,6 +9,9 @@ import org.scalatest._
 import scala.reflect.ClassTag
 
 class ProtobufGenericSpec extends FlatSpec with Matchers {
+
+  val printer = JsonFormat.printer().preservingProtoFieldNames()
+  val parser = JsonFormat.parser()
 
   def roundTrip[T <: Message : ClassTag](record: T): Unit = {
     val schema = Schema.of[T]
@@ -18,35 +22,60 @@ class ProtobufGenericSpec extends FlatSpec with Matchers {
     val writer = GenericWriter.of(schema)
     val jsonRecord = reader.read(record.toByteArray).toJson
     val bytes = writer.write(GenericRecord.fromJson(jsonRecord))
-
     val recordCopy = ProtobufType[T].parseFrom(bytes)
     recordCopy should equal (record)
+
+    compatibleWithJsonFormat(record)
+  }
+
+  def compatibleWithJsonFormat[T <: Message : ClassTag](record: T): Unit = {
+    val protoType = ProtobufType[T]
+    val schema = Schema.of[T]
+    val reader = GenericReader.of(schema)
+    val writer = GenericWriter.of(schema)
+
+    val json1 = reader.read(record.toByteArray).toJson
+    val record1 = {
+      val builder = protoType.newBuilder()
+      parser.merge(json1, builder)
+      builder.build().asInstanceOf[T]
+    }
+
+    val json2 = printer.print(record)
+    val record2 = protoType.parseFrom(writer.write(GenericRecord.fromJson(json2)))
+
+    record1 should equal (record2)
+  }
+
+  def test[T <: Message : ClassTag](record: T): Unit = {
+    roundTrip(record)
+    compatibleWithJsonFormat(record)
   }
 
   "ProtobufGeneric" should "round trip optional" in {
-    roundTrip[Optional](Records.optional)
-    roundTrip[Optional](Records.optionalEmpty)
+    test[Optional](Records.optional)
+    test[Optional](Records.optionalEmpty)
   }
 
   it should "round trip repeated" in {
-    roundTrip[Repeated](Records.repeated)
-    roundTrip[Repeated](Records.repeatedEmpty)
-    roundTrip[RepeatedPacked](Records.repeatedPacked)
-    roundTrip[RepeatedUnpacked](Records.repeatedUnpacked)
+    test[Repeated](Records.repeated)
+    test[Repeated](Records.repeatedEmpty)
+    test[RepeatedPacked](Records.repeatedPacked)
+    test[RepeatedUnpacked](Records.repeatedUnpacked)
   }
 
   it should "round trip oneofs" in {
-    Records.oneOfs.foreach(roundTrip[OneOf])
+    Records.oneOfs.foreach(test[OneOf])
   }
 
   it should "round trip mixed" in {
-    roundTrip[Mixed](Records.mixed)
-    roundTrip[Mixed](Records.mixedEmpty)
+    test[Mixed](Records.mixed)
+    test[Mixed](Records.mixedEmpty)
   }
 
   it should "round trip nested" in {
-    roundTrip[Nested](Records.nested)
-    roundTrip[Nested](Records.nestedEmpty)
+    test[Nested](Records.nested)
+    test[Nested](Records.nestedEmpty)
   }
 
 }

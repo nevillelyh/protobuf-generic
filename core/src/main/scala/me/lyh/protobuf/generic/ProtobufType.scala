@@ -17,6 +17,9 @@ class ProtobufType[T <: Message : ClassTag] {
 
   def descriptor: Descriptor = cls.getMethod("getDescriptor").invoke(null).asInstanceOf[Descriptor]
 
+  def newBuilder(): Message.Builder =
+    cls.getMethod("newBuilder").invoke(null).asInstanceOf[Message.Builder]
+
   def parseFrom(data: Array[Byte]): T =
     cls.getMethod("parseFrom", classOf[Array[Byte]]).invoke(null, data).asInstanceOf[T]
 
