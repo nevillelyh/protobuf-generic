@@ -11,7 +11,7 @@ val paradiseVersion = "2.1.0"
 val scalaCheckVersion = "1.13.2"
 val scalaTestVersion = "3.0.0"
 
-val commonSettings = PB.protobufSettings ++ Seq(
+val commonSettings = Seq(
   organization := "me.lyh",
 
   scalaVersion := "2.11.8",
@@ -33,11 +33,6 @@ val commonSettings = PB.protobufSettings ++ Seq(
     else
       Nil
     ),
-
-  version in PB.protobufConfig := protobufVersion,
-  PB.runProtoc in PB.protobufConfig := (args =>
-    com.github.os72.protocjar.Protoc.runProtoc(protocVersion  +: args.toArray)
-  ),
 
   // Release settings
   releaseCrossBuild             := true,
@@ -67,6 +62,13 @@ val commonSettings = PB.protobufSettings ++ Seq(
   }
 )
 
+val protoSettings = PB.protobufSettings ++ Seq(
+  version in PB.protobufConfig := protobufVersion,
+  PB.runProtoc in PB.protobufConfig := (args =>
+    com.github.os72.protocjar.Protoc.runProtoc(protocVersion  +: args.toArray)
+  )
+)
+
 val noPublishSettings = Seq(
   publish := {},
   publishLocal := {},
@@ -80,6 +82,7 @@ lazy val root: Project = Project(
   commonSettings ++ noPublishSettings
 ).aggregate(
   core,
+  proto2Test,
   proto3Test
 )
 
@@ -92,11 +95,19 @@ lazy val core: Project = Project(
   description := "Generic protobuf manipulation"
 )
 
+lazy val proto2Test: Project = Project(
+  "proto2test",
+  file("proto2test")
+).settings(
+  commonSettings ++ protoSettings ++ noPublishSettings
+).dependsOn(
+  core
+)
 lazy val proto3Test: Project = Project(
   "proto3test",
   file("proto3test")
 ).settings(
-  commonSettings ++ noPublishSettings,
+  commonSettings ++ protoSettings ++ noPublishSettings,
   if (isProto3) proto3Settings else noProto3Settings
 ).dependsOn(
   core
