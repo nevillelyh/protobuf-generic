@@ -1,8 +1,8 @@
 language: scala
-jdk: oraclejdk7
+jdk: oraclejdk8
 scala:
-  - 2.10.6
   - 2.11.8
+  - 2.12.0
 env:
   - PROTO=2.6.1
   - PROTO=3.0.2

@@ -5,18 +5,19 @@ val protocVersion = Map("2.6.1" -> "-v261", "3.0.2" -> "-v310", "3.1.0" -> "-v31
 val isProto3 = protobufVersion.startsWith("3.")
 
 val guavaVersion = "19.0"
-val jacksonVersion = "2.8.3"
+val jacksonVersion = "2.8.4"
 val jsr305Version = "3.0.1"
 val paradiseVersion = "2.1.0"
-val scalaCheckVersion = "1.13.2"
 val scalaTestVersion = "3.0.0"
+
+def jdkVersion(scalaBinaryVersion: String) = if (scalaBinaryVersion == "2.12") "1.8" else "1.7"
 
 val commonSettings = Seq(
   organization := "me.lyh",
 
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.6", "2.11.8"),
-  scalacOptions ++= Seq("-target:jvm-1.7", "-deprecation", "-feature", "-unchecked"),
+  scalaVersion := "2.12.0",
+  crossScalaVersions := Seq("2.11.8", "2.12.0"),
+  scalacOptions ++= Seq("-target:jvm-" + jdkVersion(scalaBinaryVersion.value), "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked"),
 
   libraryDependencies ++= Seq(
@@ -26,13 +27,6 @@ val commonSettings = Seq(
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
   ),
-
-  libraryDependencies ++= (
-    if (scalaBinaryVersion.value == "2.10")
-      Seq(compilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full))
-    else
-      Nil
-    ),
 
   // Release settings
   releaseCrossBuild             := true,
