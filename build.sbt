@@ -35,7 +35,7 @@ val commonSettings = Seq(
   publishArtifact in Test       := false,
   sonatypeProfileName           := "me.lyh",
   pomExtra                      := {
-    <url>https://github.com/spotify/ratatool</url>
+    <url>https://github.com/nevillelyh/protobuf-generic</url>
     <licenses>
       <license>
         <name>Apache 2</name>
