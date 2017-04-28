@@ -5,10 +5,10 @@ val protocVersion = Map("2.6.1" -> "-v261", "3.0.2" -> "-v310", "3.1.0" -> "-v31
 val isProto3 = protobufVersion.startsWith("3.")
 
 val guavaVersion = "19.0"
-val jacksonVersion = "2.8.4"
+val jacksonVersion = "2.8.8"
 val jsr305Version = "3.0.1"
 val paradiseVersion = "2.1.0"
-val scalaTestVersion = "3.0.0"
+val scalaTestVersion = "3.0.3"
 
 def jdkVersion(scalaBinaryVersion: String) = if (scalaBinaryVersion == "2.12") "1.8" else "1.7"
 
