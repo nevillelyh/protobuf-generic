@@ -1,7 +1,7 @@
 import sbtprotobuf.{ProtobufPlugin => PB}
 
-val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.1.0")
-val protocVersion = Map("2.6.1" -> "-v261", "3.0.2" -> "-v310", "3.1.0" -> "-v310")(protobufVersion)
+val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.3.0")
+val protocVersion = Map("2.6.1" -> "-v261", "3.3.0" -> "-v330")(protobufVersion)
 val isProto3 = protobufVersion.startsWith("3.")
 
 val guavaVersion = "19.0"
@@ -15,8 +15,8 @@ def jdkVersion(scalaBinaryVersion: String) = if (scalaBinaryVersion == "2.12") "
 val commonSettings = Seq(
   organization := "me.lyh",
 
-  scalaVersion := "2.12.1",
-  crossScalaVersions := Seq("2.11.8", "2.12.0"),
+  scalaVersion := "2.12.2",
+  crossScalaVersions := Seq("2.11.11", "2.12.2"),
   scalacOptions ++= Seq("-target:jvm-" + jdkVersion(scalaBinaryVersion.value), "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked"),
 
