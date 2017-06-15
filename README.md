@@ -6,7 +6,7 @@ protobuf-generic
 [![GitHub license](https://img.shields.io/github/license/nevillelyh/protobuf-generic.svg)](./LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/me.lyh/protobuf-generic_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/me.lyh/protobuf-generic_2.12)
 
-Manipulate [Protocol Buffers](https://developers.google.com/protocol-buffers/) schema and records in a generic manner without compiled classes, similar to [Avro](https://avro.apache.org/) `GenericRecord`.
+Manipulate [Protocol Buffers](https://developers.google.com/protocol-buffers/) schemas and records in a generic manner without compiled classes, similar to [Avro](https://avro.apache.org/)'s `GenericRecord`.
 
 # Usage
 
