@@ -15,8 +15,8 @@ def jdkVersion(scalaBinaryVersion: String) = if (scalaBinaryVersion == "2.12") "
 val commonSettings = Seq(
   organization := "me.lyh",
 
-  scalaVersion := "2.12.2",
-  crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2"),
+  scalaVersion := "2.12.3",
+  crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3"),
   scalacOptions ++= Seq("-target:jvm-" + jdkVersion(scalaBinaryVersion.value), "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked"),
 

@@ -13,10 +13,10 @@ matrix:
     - scala: 2.11.11
       jdk: oraclejdk7
       env: PROTO=3.3.0
-    - scala: 2.12.2
+    - scala: 2.12.3
       jdk: oraclejdk8
       env: PROTO=2.6.1
-    - scala: 2.12.2
+    - scala: 2.12.3
       jdk: oraclejdk8
       env: PROTO=3.3.0
 
