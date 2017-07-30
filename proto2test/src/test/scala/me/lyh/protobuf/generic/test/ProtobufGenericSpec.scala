@@ -1,5 +1,8 @@
 package me.lyh.protobuf.generic.test
 
+import java.io.ByteArrayInputStream
+import java.nio.ByteBuffer
+
 import com.google.protobuf.Message
 import me.lyh.protobuf.generic._
 import me.lyh.protobuf.generic.proto.Schemas._
@@ -17,6 +20,8 @@ class ProtobufGenericSpec extends FlatSpec with Matchers {
     val reader = GenericReader.of(schema)
     val writer = GenericWriter.of(schema)
     val jsonRecord = reader.read(record.toByteArray).toJson
+    jsonRecord should equal (reader.read(ByteBuffer.wrap(record.toByteArray)).toJson)
+    jsonRecord should equal (reader.read(new ByteArrayInputStream(record.toByteArray)).toJson)
     val bytes = writer.write(GenericRecord.fromJson(jsonRecord))
 
     val recordCopy = ProtobufType[T].parseFrom(bytes)
