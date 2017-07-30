@@ -10,20 +10,20 @@ import scala.reflect.ClassTag
 
 class ProtobufGenericSpec extends FlatSpec with Matchers {
 
-  val printer = JsonFormat.printer().preservingProtoFieldNames()
-  val parser = JsonFormat.parser()
+  private val printer = JsonFormat.printer().preservingProtoFieldNames()
+  private val parser = JsonFormat.parser()
 
   def roundTrip[T <: Message : ClassTag](record: T): Unit = {
     val schema = Schema.of[T]
     val schemaCopy = Schema.fromJson(schema.toJson)
-    schemaCopy should equal (schema)
+    schemaCopy shouldBe schema
 
     val reader = GenericReader.of(schema)
     val writer = GenericWriter.of(schema)
     val jsonRecord = reader.read(record.toByteArray).toJson
     val bytes = writer.write(GenericRecord.fromJson(jsonRecord))
     val recordCopy = ProtobufType[T].parseFrom(bytes)
-    recordCopy should equal (record)
+    recordCopy shouldBe record
 
     compatibleWithJsonFormat(record)
   }
@@ -44,7 +44,7 @@ class ProtobufGenericSpec extends FlatSpec with Matchers {
     val json2 = printer.print(record)
     val record2 = protoType.parseFrom(writer.write(GenericRecord.fromJson(json2)))
 
-    record1 should equal (record2)
+    record1 shouldBe record2
   }
 
   def test[T <: Message : ClassTag](record: T): Unit = {

@@ -15,17 +15,17 @@ class ProtobufGenericSpec extends FlatSpec with Matchers {
   def roundTrip[T <: Message : ClassTag](record: T): Unit = {
     val schema = Schema.of[T]
     val schemaCopy = Schema.fromJson(schema.toJson)
-    schemaCopy should equal (schema)
+    schemaCopy shouldBe schema
 
     val reader = GenericReader.of(schema)
     val writer = GenericWriter.of(schema)
     val jsonRecord = reader.read(record.toByteArray).toJson
-    jsonRecord should equal (reader.read(ByteBuffer.wrap(record.toByteArray)).toJson)
-    jsonRecord should equal (reader.read(new ByteArrayInputStream(record.toByteArray)).toJson)
+    jsonRecord shouldBe reader.read(ByteBuffer.wrap(record.toByteArray)).toJson
+    jsonRecord shouldBe reader.read(new ByteArrayInputStream(record.toByteArray)).toJson
     val bytes = writer.write(GenericRecord.fromJson(jsonRecord))
 
     val recordCopy = ProtobufType[T].parseFrom(bytes)
-    recordCopy should equal (record)
+    recordCopy shouldBe record
   }
 
   "ProtobufGeneric" should "round trip required" in {

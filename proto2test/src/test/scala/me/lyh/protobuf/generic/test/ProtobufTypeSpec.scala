@@ -9,31 +9,31 @@ import org.scalatest._
 
 class ProtobufTypeSpec extends FlatSpec with Matchers {
 
-  val pt = ProtobufType[Optional]
-  val record = Records.optional
+  private val pt = ProtobufType[Optional]
+  private val record = Records.optional
 
   "ProtobufType.descriptor" should "work" in {
-    pt.descriptor should equal (Optional.getDescriptor)
+    pt.descriptor shouldBe Optional.getDescriptor
   }
 
   "ProtobufType.newBuilder" should "work" in {
-    pt.newBuilder().build() should equal (Optional.newBuilder().build())
+    pt.newBuilder().build() shouldBe Optional.newBuilder().build()
   }
 
   "ProtobufType.parseFrom" should "support byte array" in {
-    pt.parseFrom(record.toByteArray) should equal (record)
+    pt.parseFrom(record.toByteArray) shouldBe record
   }
 
   it should "support ByteString" in {
-    pt.parseFrom(record.toByteString) should equal (record)
+    pt.parseFrom(record.toByteString) shouldBe record
   }
 
   it should "support InputStream" in {
-    pt.parseFrom(new ByteArrayInputStream(record.toByteArray)) should equal (record)
+    pt.parseFrom(new ByteArrayInputStream(record.toByteArray)) shouldBe record
   }
 
   it should "support CodedInputStream" in {
-    pt.parseFrom(CodedInputStream.newInstance(record.toByteArray)) should equal (record)
+    pt.parseFrom(CodedInputStream.newInstance(record.toByteArray)) shouldBe record
   }
 
 }
