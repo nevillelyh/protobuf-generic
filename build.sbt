@@ -6,15 +6,13 @@ val jsr305Version = "3.0.1"
 val paradiseVersion = "2.1.0"
 val scalaTestVersion = "3.0.3"
 
-def jdkVersion(scalaBinaryVersion: String) = if (scalaBinaryVersion == "2.12") "1.8" else "1.7"
-
 val commonSettings = Seq(
   organization := "me.lyh",
 
   scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3"),
-  scalacOptions ++= Seq("-target:jvm-" + jdkVersion(scalaBinaryVersion.value), "-deprecation", "-feature", "-unchecked"),
-  javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked"),
+  crossScalaVersions := Seq("2.11.11", "2.12.3"),
+  scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
 
   libraryDependencies ++= Seq(
     "com.google.protobuf" % "protobuf-java" % protobufVersion % "provided",
