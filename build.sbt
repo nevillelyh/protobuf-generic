@@ -1,7 +1,4 @@
-import sbtprotobuf.{ProtobufPlugin => PB}
-
-val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.3.0")
-val protocVersion = Map("2.6.1" -> "-v261", "3.3.0" -> "-v330")(protobufVersion)
+val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.4.0")
 val isProto3 = protobufVersion.startsWith("3.")
 
 val jacksonVersion = "2.8.8"
@@ -54,10 +51,10 @@ val commonSettings = Seq(
   }
 )
 
-val protoSettings = PB.protobufSettings ++ Seq(
-  version in PB.protobufConfig := protobufVersion,
-  PB.runProtoc in PB.protobufConfig := (args =>
-    com.github.os72.protocjar.Protoc.runProtoc(protocVersion  +: args.toArray)
+val protoSettings = Seq(
+  version in ProtobufConfig := protobufVersion,
+  protobufRunProtoc in ProtobufConfig := (args =>
+    com.github.os72.protocjar.Protoc.runProtoc(s"-v$protobufVersion" +: args.toArray)
   )
 )
 
@@ -90,7 +87,7 @@ lazy val core: Project = Project(
 lazy val proto2Test: Project = Project(
   "proto2test",
   file("proto2test")
-).settings(
+).enablePlugins(ProtobufPlugin).settings(
   commonSettings ++ protoSettings ++ noPublishSettings
 ).dependsOn(
   core
@@ -98,7 +95,7 @@ lazy val proto2Test: Project = Project(
 lazy val proto3Test: Project = Project(
   "proto3test",
   file("proto3test")
-).settings(
+).enablePlugins(ProtobufPlugin).settings(
   commonSettings ++ protoSettings ++ noPublishSettings,
   if (isProto3) proto3Settings else noProto3Settings
 ).dependsOn(
