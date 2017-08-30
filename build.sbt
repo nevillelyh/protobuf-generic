@@ -22,6 +22,7 @@ val commonSettings = Seq(
   ),
 
   // Release settings
+  publishTo := Some(if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging),
   releaseCrossBuild             := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle             := true,
