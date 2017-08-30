@@ -2,7 +2,6 @@ package me.lyh.protobuf.generic
 
 import java.io.{ByteArrayOutputStream, OutputStream}
 
-import com.google.common.io.BaseEncoding
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.{CodedOutputStream, WireFormat}
 import com.google.protobuf.Descriptors.FieldDescriptor.Type
@@ -49,7 +48,7 @@ class GenericWriter(val schema: Schema) {
       case Type.BOOL => out.writeBoolNoTag(value.toString.toBoolean)
       case Type.STRING => out.writeStringNoTag(value.toString)
       case Type.BYTES =>
-        out.writeByteArrayNoTag(BaseEncoding.base64().decode(value.toString))
+        out.writeByteArrayNoTag(Base64.decode(value.toString))
       case Type.ENUM =>
         val enumMap = schema.enums(field.schema.get).values.map(kv => (kv._2, kv._1))
         out.writeEnumNoTag(enumMap(value.toString))

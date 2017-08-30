@@ -4,7 +4,6 @@ val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.3.0")
 val protocVersion = Map("2.6.1" -> "-v261", "3.3.0" -> "-v330")(protobufVersion)
 val isProto3 = protobufVersion.startsWith("3.")
 
-val guavaVersion = "19.0"
 val jacksonVersion = "2.8.8"
 val jsr305Version = "3.0.1"
 val paradiseVersion = "2.1.0"
@@ -23,7 +22,6 @@ val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "com.google.protobuf" % "protobuf-java" % protobufVersion % "provided",
     "com.google.code.findbugs" % "jsr305" % jsr305Version % "provided",
-    "com.google.guava" % "guava" % guavaVersion,
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
   ),

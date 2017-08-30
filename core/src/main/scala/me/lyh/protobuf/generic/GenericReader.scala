@@ -2,9 +2,8 @@ package me.lyh.protobuf.generic
 
 import java.io.InputStream
 import java.nio.ByteBuffer
+import java.util.{ArrayList => JArrayList, LinkedHashMap => JLinkedHashMap, TreeMap => JTreeMap}
 
-import com.google.common.collect.{Lists, Maps}
-import com.google.common.io.BaseEncoding
 import com.google.protobuf.Descriptors.FieldDescriptor.Type
 import com.google.protobuf.{CodedInputStream, WireFormat}
 
@@ -43,7 +42,7 @@ class GenericReader(val schema: Schema) {
       case Type.SINT64 => in.readSInt64()
       case Type.BOOL => in.readBool()
       case Type.STRING => in.readString()
-      case Type.BYTES => BaseEncoding.base64().encode(in.readByteArray())
+      case Type.BYTES => Base64.encode(in.readByteArray())
       case Type.ENUM => schema.enums(field.schema.get).values(in.readEnum())
       case Type.MESSAGE =>
         val nestedIn = CodedInputStream.newInstance(in.readByteBuffer())
@@ -51,7 +50,7 @@ class GenericReader(val schema: Schema) {
       case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
     }
 
-    val map = Maps.newTreeMap[java.lang.Integer, Any]()
+    val map = new JTreeMap[java.lang.Integer, Any]()
     while (!input.isAtEnd) {
       val tag = input.readTag()
       val id = WireFormat.getTagFieldNumber(tag)
@@ -59,7 +58,7 @@ class GenericReader(val schema: Schema) {
 
       if (field.label == Label.REPEATED) {
         if (!map.containsKey(id)) {
-          map.put(id, Lists.newArrayList[Any]())
+          map.put(id, new JArrayList[Any]())
         }
         val list = map.get(id).asInstanceOf[java.util.ArrayList[Any]]
         if (field.packed) {
@@ -75,7 +74,7 @@ class GenericReader(val schema: Schema) {
       }
     }
 
-    val result = Maps.newLinkedHashMap[String, Any]()
+    val result = new JLinkedHashMap[String, Any]()
     map.asScala.foreach(kv => result.put(messageSchema.fields(kv._1).name, kv._2))
     result
   }
