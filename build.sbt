@@ -1,16 +1,16 @@
 val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.4.0")
 val isProto3 = protobufVersion.startsWith("3.")
 
-val jacksonVersion = "2.8.8"
-val jsr305Version = "3.0.1"
+val jacksonVersion = "2.9.2"
+val jsr305Version = "3.0.2"
 val paradiseVersion = "2.1.0"
-val scalaTestVersion = "3.0.3"
+val scalaTestVersion = "3.0.4"
 
 val commonSettings = Seq(
   organization := "me.lyh",
 
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.11.11", "2.12.3"),
+  scalaVersion := "2.12.4",
+  crossScalaVersions := Seq("2.11.12", "2.12.4"),
   scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
 
