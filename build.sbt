@@ -75,7 +75,8 @@ lazy val proto2Test: Project = Project(
   "proto2test",
   file("proto2test")
 ).enablePlugins(ProtobufPlugin).settings(
-  commonSettings ++ protoSettings ++ noPublishSettings
+  commonSettings ++ protoSettings ++ noPublishSettings,
+  protobufProtocOptions in ProtobufConfig ++= Seq("--include_std_types"),
 ).dependsOn(
   core
 )
@@ -84,6 +85,7 @@ lazy val proto3Test: Project = Project(
   file("proto3test")
 ).enablePlugins(ProtobufPlugin).settings(
   commonSettings ++ protoSettings ++ noPublishSettings,
+  protobufProtocOptions in ProtobufConfig ++= Seq("--include_std_types"),
   if (isProto3) proto3Settings else noProto3Settings
 ).dependsOn(
   core

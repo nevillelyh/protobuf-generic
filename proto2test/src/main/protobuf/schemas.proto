@@ -1,5 +1,8 @@
 syntax = "proto2";
 
+// custom options need descriptor file
+import "google/protobuf/descriptor.proto";
+
 package me.lyh.protobuf.generic.proto;
 
 option optimize_for = SPEED;
@@ -147,4 +150,32 @@ message Nested {
     required Mixed mixed_field = 7;
     optional Mixed mixed_field_o = 8;
     repeated Mixed mixed_field_r = 9;
+}
+// define custom options
+extend google.protobuf.MessageOptions {
+    optional int32 my_message_option = 50001;
+}
+extend google.protobuf.FieldOptions {
+    optional float my_field_option = 50002;
+    optional string my_field_option_str = 50003;
+
+}
+extend google.protobuf.EnumOptions {
+    optional bool my_enum_option = 50004;
+}
+extend google.protobuf.EnumValueOptions {
+    optional string my_enum_value_option = 50005;
+}
+
+enum STATE {
+    option (my_enum_option) = true;
+    START = 1 [(my_enum_value_option) = "Custom enum value option"];
+    STOP = 2;
+}
+
+message CustomOptionMessage {
+    option (my_message_option) = 1234;
+    optional int32 foo = 1 [(my_field_option) = 4.5];
+    optional string bar = 2 [(my_field_option_str) = "String field custom option"];
+    optional STATE state = 3 [(my_field_option_str) = "Field custom option"];
 }

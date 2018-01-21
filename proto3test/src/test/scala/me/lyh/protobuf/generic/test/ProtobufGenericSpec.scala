@@ -78,4 +78,8 @@ class ProtobufGenericSpec extends FlatSpec with Matchers {
     test[Nested](Records.nestedEmpty)
   }
 
+  it should "round trip with custom options" in {
+    test[CustomOptionMessage](Records.customOptionMessage)
+    test[CustomOptionMessage](Records.customOptionMessageEmpty)
+  }
 }
