@@ -72,7 +72,7 @@ object Schema {
     options.getAllFields.asScala.foldLeft(Map.empty[String, String]) {
       (map, field) => {
         field match {
-          case (desc, ref) => map + (desc.getJsonName -> ref.toString)
+          case (desc, ref) => map + (desc.getFullName -> ref.toString)
         }
       }
     }
