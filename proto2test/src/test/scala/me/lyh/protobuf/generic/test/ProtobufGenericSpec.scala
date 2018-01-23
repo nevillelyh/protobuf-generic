@@ -58,4 +58,9 @@ class ProtobufGenericSpec extends FlatSpec with Matchers {
     roundTrip[Nested](Records.nestedEmpty)
   }
 
+  it should "round trip with custom options" in {
+    roundTrip[CustomOptionMessage](Records.customOptionMessage)
+    roundTrip[CustomOptionMessage](Records.customOptionMessageEmpty)
+  }
+
 }
