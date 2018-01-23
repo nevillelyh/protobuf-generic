@@ -1,6 +1,7 @@
 package me.lyh.protobuf.generic
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.google.protobuf.DescriptorProtos.FieldDescriptorProto.Label._
 import com.google.protobuf.Descriptors.{Descriptor, EnumDescriptor, FieldDescriptor}
@@ -13,11 +14,12 @@ case class Schema(name: String, messages: Map[String, MessageSchema], enums: Map
 
 sealed trait DescriptorSchema
 
-case class MessageSchema(name: String, fields: Map[Int, Field], options: Map[String, String]) extends DescriptorSchema
+case class MessageSchema(name: String, fields: Map[Int, Field], options: Option[Map[String, String]]) extends DescriptorSchema
 
-case class EnumSchema(name: String, values: Map[Int, String], options: Map[String, String]) extends DescriptorSchema
+case class EnumSchema(name: String, values: Map[Int, String], options: Option[Map[String, String]]) extends DescriptorSchema
 
-case class Field(id: Int, name: String, label: Label, `type`: FieldDescriptor.Type, packed: Boolean, schema: Option[String], options: Map[String, String] = Map.empty)
+case class Field(id: Int, name: String, label: Label, `type`: FieldDescriptor.Type, packed: Boolean,
+                 schema: Option[String], options: Option[Map[String, String]])
 
 object Schema {
 
@@ -68,26 +70,32 @@ object Schema {
     case LABEL_REPEATED => Label.REPEATED
   }
 
-  private[generic] def optionMap(options: MessageOrBuilder): Map[String, String] = {
-    options.getAllFields.asScala.foldLeft(Map.empty[String, String]) {
-      (map, field) => {
-        field match {
-          case (desc, ref) => map + (desc.getFullName -> ref.toString)
+  private[generic] def optionMap(options: MessageOrBuilder): Option[Map[String, String]] = {
+    if (options.getAllFields.size > 0) {
+      val optionsMap = options.getAllFields.asScala.foldLeft(Map.empty[String, String]) {
+        (map, field) => {
+          field match {
+            case (desc, ref) => map + (desc.getFullName -> ref.toString)
+          }
         }
       }
-    }
+      Some(optionsMap)
+    } else None
   }
 }
 
 private[generic] object SchemaMapper {
 
-  private val schemaMapper = new ObjectMapper().registerModule(DefaultScalaModule)
+  private val schemaMapper = new ObjectMapper()
+    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    .registerModule(DefaultScalaModule)
 
   case class JSchema(name: String, messages: Iterable[JMessageSchema], enums: Iterable[JEnumSchema])
 
-  case class JMessageSchema(name: String, fields: Iterable[Field], options: Map[String, String])
+  case class JMessageSchema(name: String, fields: Iterable[Field], options: Option[Map[String, String]])
 
-  case class JEnumSchema(name: String, values: Map[String, Int], options: Map[String, String])
+  case class JEnumSchema(name: String, values: Map[String, Int], options: Option[Map[String, String]])
 
   def toJson(schema: Schema): String = {
     val jSchema = JSchema(schema.name, schema.messages.values.map(toJMessageSchema), schema.enums.values.map(toJEnumSchema))

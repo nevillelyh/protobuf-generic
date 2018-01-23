@@ -132,6 +132,7 @@ object Records {
     .setBar("Bar")
     .setFoo(123)
     .setState(STATE.START)
+    .setFooBar("Foo Bar")
     .build()
 
   val customOptionMessageEmpty = CustomOptionMessage.getDefaultInstance

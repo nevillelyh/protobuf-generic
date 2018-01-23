@@ -153,5 +153,6 @@ message CustomOptionMessage {
     int32 foo = 1 [(my_field_option) = 4.5];
     string bar = 2 [(my_field_option_str) = "String field custom option"];
     STATE state = 3 [(my_field_option_str) = "Field custom option"];
+    string fooBar = 4;
 }
 

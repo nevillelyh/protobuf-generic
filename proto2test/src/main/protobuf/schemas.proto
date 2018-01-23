@@ -178,4 +178,5 @@ message CustomOptionMessage {
     optional int32 foo = 1 [(my_field_option) = 4.5];
     optional string bar = 2 [(my_field_option_str) = "String field custom option"];
     optional STATE state = 3 [(my_field_option_str) = "Field custom option"];
+    optional string fooBar = 4;
 }
