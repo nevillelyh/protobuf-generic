@@ -84,7 +84,6 @@ object Schema {
 private[generic] object SchemaMapper {
 
   private val schemaMapper = new ObjectMapper()
-    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .registerModule(DefaultScalaModule)
 
