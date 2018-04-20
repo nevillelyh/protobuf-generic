@@ -6,19 +6,13 @@ matrix:
       env: PROTO=2.6.1
     - scala: 2.11.12
       jdk: oraclejdk8
-      env: PROTO=3.3.0
-    - scala: 2.11.12
-      jdk: oraclejdk8
-      env: PROTO=3.4.0
-    - scala: 2.12.4
+      env: PROTO=3.5.1
+    - scala: 2.12.5
       jdk: oraclejdk8
       env: PROTO=2.6.1
-    - scala: 2.12.4
+    - scala: 2.12.5
       jdk: oraclejdk8
-      env: PROTO=3.3.0
-    - scala: 2.12.4
-      jdk: oraclejdk8
-      env: PROTO=3.4.0
+      env: PROTO=3.5.1
 
 cache:
   directories:
