@@ -3,14 +3,13 @@ val isProto3 = protobufVersion.startsWith("3.")
 
 val jacksonVersion = "2.9.2"
 val jsr305Version = "3.0.2"
-val paradiseVersion = "2.1.1"
-val scalaTestVersion = "3.0.5"
+val scalaTestVersion = "3.0.7"
 
 val commonSettings = Seq(
   organization := "me.lyh",
 
-  scalaVersion := "2.12.6",
-  crossScalaVersions := Seq("2.11.12", "2.12.6"),
+  scalaVersion := "2.12.8",
+  crossScalaVersions := Seq("2.11.12", "2.12.8"),
   scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
 
