@@ -51,7 +51,7 @@ val noPublishSettings = Seq(
 )
 
 lazy val root: Project = Project(
-  "root",
+  "protobuf-generic-parent",
   file(".")
 ).settings(
   commonSettings ++ noPublishSettings
