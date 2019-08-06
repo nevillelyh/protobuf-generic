@@ -1,9 +1,9 @@
-val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.6.1")
+val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.9.1")
 val isProto3 = protobufVersion.startsWith("3.")
 
-val jacksonVersion = "2.9.8"
+val jacksonVersion = "2.9.9"
 val jsr305Version = "3.0.2"
-val scalaTestVersion = "3.0.7"
+val scalaTestVersion = "3.0.8"
 
 val commonSettings = Seq(
   organization := "me.lyh",
