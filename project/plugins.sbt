@@ -1,7 +1,7 @@
 addSbtPlugin("com.github.gseitz" % "sbt-protobuf" % "0.6.5")
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.11")
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.2-1")
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.0")
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.5")
 
 // each protoc-jar 3.x release contains only 1 3.x.x binary
