@@ -1,15 +1,8 @@
 language: scala
 matrix:
   include:
-    - scala: 2.11.12
-      jdk: openjdk8
-      env: PROTO=2.6.1
-    - scala: 2.11.12
-      jdk: openjdk8
-      env: PROTO=3.3.0
-    - scala: 2.11.12
-      jdk: openjdk8
-      env: PROTO=3.5.1
+    # build all JDK & Protobuf combinations for Scala 2.12
+    # build only latest JDK & Protobuf for Scala 2.11 & 2.13
     - scala: 2.11.12
       jdk: openjdk8
       env: PROTO=3.6.0
@@ -35,6 +28,9 @@ matrix:
       jdk: oraclejdk11
       env: PROTO=3.5.1
     - scala: 2.12.9
+      jdk: oraclejdk11
+      env: PROTO=3.6.0
+    - scala: 2.13.0
       jdk: oraclejdk11
       env: PROTO=3.6.0
 
