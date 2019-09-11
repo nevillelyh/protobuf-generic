@@ -12,6 +12,7 @@ val commonSettings = Seq(
   crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.0"),
   scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
+  javacOptions in (Compile, doc) := Seq("-source", "1.8"),
 
   libraryDependencies ++= Seq(
     "com.google.protobuf" % "protobuf-java" % protobufVersion % "provided",
