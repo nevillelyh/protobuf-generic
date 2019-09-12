@@ -17,10 +17,10 @@ val commonSettings = Seq(
   ThisBuild / useCoursier := false,
 
   libraryDependencies ++= Seq(
-    "com.google.protobuf" % "protobuf-java" % protobufVersion % "provided",
-    "com.google.code.findbugs" % "jsr305" % jsr305Version % "provided",
+    "com.google.protobuf" % "protobuf-java" % protobufVersion % Provided,
+    "com.google.code.findbugs" % "jsr305" % jsr305Version % Provided,
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
-    "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
+    "org.scalatest" %% "scalatest" % scalaTestVersion % Test
   ),
 
   // Release settings
