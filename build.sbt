@@ -13,8 +13,6 @@ val commonSettings = Seq(
   scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
-  // workaround for https://github.com/sbt/sbt/issues/4995#issuecomment-530539378
-  ThisBuild / useCoursier := false,
 
   libraryDependencies ++= Seq(
     "com.google.protobuf" % "protobuf-java" % protobufVersion % Provided,
