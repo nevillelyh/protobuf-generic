@@ -1,7 +1,7 @@
 val protobufVersion = Option(sys.props("protobuf.version")).getOrElse("3.10.0")
 val isProto3 = protobufVersion.startsWith("3.")
 
-val jacksonVersion = "2.9.10"
+val jacksonVersion = "2.10.0"
 val jsr305Version = "3.0.2"
 val scalaTestVersion = "3.0.8"
 
