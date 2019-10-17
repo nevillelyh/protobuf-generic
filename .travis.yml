@@ -1,8 +1,8 @@
 language: scala
 matrix:
   include:
-    # for Scala 2.11 & 2.13, build last supported JDK + Protobuf combo
-    # for Scala 2.12, build JDK 8 + last supported Protobuf combo and
+    # for Scala 2.11 & 2.13, build latest supported JDK + Protobuf combo
+    # for Scala 2.12, build JDK 8 + latest supported Protobuf combo and
     # JDK 11 + all Protobuf combo
     - scala: 2.11.12
       jdk: openjdk8
@@ -13,26 +13,26 @@ matrix:
       env: PROTO=3.8.0
 
     - scala: 2.12.10
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: PROTO=2.6.1
     - scala: 2.12.10
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: PROTO=3.3.0
     - scala: 2.12.10
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: PROTO=3.5.1
     - scala: 2.12.10
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: PROTO=3.6.0
     - scala: 2.12.10
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: PROTO=3.7.1
     - scala: 2.12.10
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: PROTO=3.8.0
 
     - scala: 2.13.1
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: PROTO=3.8.0
 
 cache:
