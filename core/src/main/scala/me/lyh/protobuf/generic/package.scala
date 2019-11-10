@@ -3,7 +3,6 @@ package me.lyh.protobuf
 import com.fasterxml.jackson.databind.ObjectMapper
 
 package object generic {
-
   type GenericRecord = java.util.Map[String, Any]
 
   private val recordMapper = new ObjectMapper()
@@ -19,5 +18,4 @@ package object generic {
   implicit class JsonSchema(val schema: Schema) {
     def toJson: String = SchemaMapper.toJson(schema)
   }
-
 }

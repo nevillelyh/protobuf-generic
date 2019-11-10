@@ -11,8 +11,7 @@ import org.scalatest._
 import scala.reflect.ClassTag
 
 class ProtobufGenericSpec extends FlatSpec with Matchers {
-
-  def roundTrip[T <: Message : ClassTag](record: T): Unit = {
+  def roundTrip[T <: Message: ClassTag](record: T): Unit = {
     val schema = Schema.of[T]
     val schemaCopy = Schema.fromJson(schema.toJson)
     schemaCopy shouldBe schema
@@ -62,5 +61,4 @@ class ProtobufGenericSpec extends FlatSpec with Matchers {
     roundTrip[CustomOptionMessage](Records.customOptionMessage)
     roundTrip[CustomOptionMessage](Records.customOptionMessageEmpty)
   }
-
 }
