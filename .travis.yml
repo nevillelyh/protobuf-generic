@@ -31,7 +31,7 @@ matrix:
       jdk: openjdk11
       env: PROTO=3.8.0
 
-    - scala: 2.13.0
+    - scala: 2.13.1
       jdk: openjdk11
       env: PROTO=3.8.0
 
