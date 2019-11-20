@@ -6,10 +6,10 @@ import me.lyh.protobuf.generic.proto.Schemas._
 import scala.collection.JavaConverters._
 
 object Records {
-
   def jList[T](xs: T*): java.util.List[T] = xs.asJava
 
-  val optional = Optional.newBuilder()
+  val optional = Optional
+    .newBuilder()
     .setDoubleField(math.Pi)
     .setFloatField(math.E.toFloat)
     .setInt32Field(10)
@@ -30,7 +30,8 @@ object Records {
 
   val optionalEmpty = Optional.getDefaultInstance
 
-  val repeated = Repeated.newBuilder()
+  val repeated = Repeated
+    .newBuilder()
     .addAllDoubleField(jList(math.Pi, -math.Pi))
     .addAllFloatField(jList(math.E.toFloat, -math.E.toFloat))
     .addAllInt32Field(jList(10, 11))
@@ -51,7 +52,8 @@ object Records {
 
   val repeatedEmpty = Repeated.getDefaultInstance
 
-  val repeatedPacked = RepeatedPacked.newBuilder()
+  val repeatedPacked = RepeatedPacked
+    .newBuilder()
     .addAllDoubleField(jList(math.Pi, -math.Pi))
     .addAllFloatField(jList(math.E.toFloat, -math.E.toFloat))
     .addAllInt32Field(jList(10, 11))
@@ -68,7 +70,8 @@ object Records {
     .addAllColorField(jList(Color.BLACK, Color.WHITE))
     .build()
 
-  val repeatedUnpacked = RepeatedUnpacked.newBuilder()
+  val repeatedUnpacked = RepeatedUnpacked
+    .newBuilder()
     .addAllDoubleField(jList(math.Pi, -math.Pi))
     .addAllFloatField(jList(math.E.toFloat, -math.E.toFloat))
     .addAllInt32Field(jList(10, 11))
@@ -102,9 +105,11 @@ object Records {
     OneOf.newBuilder().setBoolField(true).build(),
     OneOf.newBuilder().setStringField("hello").build(),
     OneOf.newBuilder().setBytesField(ByteString.copyFromUtf8("world")).build(),
-    OneOf.newBuilder().setColorField(Color.BLACK).build())
+    OneOf.newBuilder().setColorField(Color.BLACK).build()
+  )
 
-  val mixed = Mixed.newBuilder()
+  val mixed = Mixed
+    .newBuilder()
     .setDoubleFieldO(math.Pi)
     .setStringFieldO("hello")
     .setBytesFieldO(ByteString.copyFromUtf8("world"))
@@ -117,7 +122,8 @@ object Records {
 
   val mixedEmpty = Mixed.getDefaultInstance
 
-  val nested = Nested.newBuilder()
+  val nested = Nested
+    .newBuilder()
     .setDoubleFieldO(math.Pi)
     .addAllDoubleFieldR(jList(math.Pi, -math.Pi))
     .setColorFieldO(Color.BLACK)
@@ -128,7 +134,8 @@ object Records {
 
   val nestedEmpty = Nested.getDefaultInstance
 
-  val customOptionMessage = CustomOptionMessage.newBuilder()
+  val customOptionMessage = CustomOptionMessage
+    .newBuilder()
     .setBar("Bar")
     .setFoo(123)
     .setState(STATE.START)
@@ -136,5 +143,4 @@ object Records {
     .build()
 
   val customOptionMessageEmpty = CustomOptionMessage.getDefaultInstance
-
 }

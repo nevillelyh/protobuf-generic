@@ -5,7 +5,6 @@ import org.scalatest._
 import scala.util.Random
 
 class Base64Spec extends FlatSpec with Matchers {
-
   private def nextBytes: Array[Byte] = {
     val bytes = new Array[Byte](Random.nextInt(100) + 1)
     Random.nextBytes(bytes)
@@ -16,5 +15,4 @@ class Base64Spec extends FlatSpec with Matchers {
     val data = Seq.fill(100)(nextBytes)
     data.map(d => Base64.decode(Base64.encode(d)).toSeq) shouldBe data.map(_.toSeq)
   }
-
 }

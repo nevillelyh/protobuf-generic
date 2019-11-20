@@ -8,11 +8,10 @@ import com.google.protobuf.{ByteString, CodedInputStream, Message}
 import scala.reflect.ClassTag
 
 object ProtobufType {
-  def apply[T <: Message : ClassTag]: ProtobufType[T] = new ProtobufType[T]
+  def apply[T <: Message: ClassTag]: ProtobufType[T] = new ProtobufType[T]
 }
 
-class ProtobufType[T <: Message : ClassTag] {
-
+class ProtobufType[T <: Message: ClassTag] {
   private val cls = implicitly[ClassTag[T]].runtimeClass
 
   def descriptor: Descriptor = cls.getMethod("getDescriptor").invoke(null).asInstanceOf[Descriptor]
@@ -31,5 +30,4 @@ class ProtobufType[T <: Message : ClassTag] {
 
   def parseFrom(input: CodedInputStream): T =
     cls.getMethod("parseFrom", classOf[CodedInputStream]).invoke(null, input).asInstanceOf[T]
-
 }

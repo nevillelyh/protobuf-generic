@@ -8,7 +8,6 @@ import me.lyh.protobuf.generic.proto.Schemas._
 import org.scalatest._
 
 class ProtobufTypeSpec extends FlatSpec with Matchers {
-
   private val pt = ProtobufType[Optional]
   private val record = Records.optional
 
@@ -35,5 +34,4 @@ class ProtobufTypeSpec extends FlatSpec with Matchers {
   it should "support CodedInputStream" in {
     pt.parseFrom(CodedInputStream.newInstance(record.toByteArray)) shouldBe record
   }
-
 }
