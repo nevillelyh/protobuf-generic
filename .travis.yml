@@ -1,17 +1,26 @@
 language: scala
 matrix:
   include:
-    # for Scala 2.11 & 2.13, build latest supported JDK + Protobuf combo
-    # for Scala 2.12, build JDK 8 + latest supported Protobuf combo and
-    # JDK 11 + all Protobuf combo
+    # Latest Protobuf, latest JDK and cross Scala versions
     - scala: 2.11.12
       jdk: openjdk8
-      env: PROTO=3.8.0
+      env: PROTO=3.10.0
 
     - scala: 2.12.10
       jdk: openjdk8
-      env: PROTO=3.8.0
+      env: PROTO=3.10.0
+    - scala: 2.12.10
+      jdk: openjdk11
+      env: PROTO=3.10.0
 
+    - scala: 2.13.1
+      jdk: openjdk8
+      env: PROTO=3.10.0
+    - scala: 2.13.1
+      jdk: openjdk11
+      env: PROTO=3.10.0
+
+    # Previous Protobuf versions
     - scala: 2.12.10
       jdk: openjdk11
       env: PROTO=2.6.1
@@ -30,10 +39,9 @@ matrix:
     - scala: 2.12.10
       jdk: openjdk11
       env: PROTO=3.8.0
-
-    - scala: 2.13.1
+    - scala: 2.12.10
       jdk: openjdk11
-      env: PROTO=3.8.0
+      env: PROTO=3.9.2
 
 before_cache:
   # Tricks to avoid unnecessary cache updates
