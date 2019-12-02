@@ -6,8 +6,10 @@ import com.google.protobuf.CodedInputStream
 import me.lyh.protobuf.generic._
 import me.lyh.protobuf.generic.proto.Schemas._
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ProtobufTypeSpec extends FlatSpec with Matchers {
+class ProtobufTypeSpec extends AnyFlatSpec with Matchers {
   private val pt = ProtobufType[Optional]
   private val record = Records.optional
 

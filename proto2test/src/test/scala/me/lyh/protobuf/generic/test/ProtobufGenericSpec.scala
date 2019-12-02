@@ -9,8 +9,10 @@ import me.lyh.protobuf.generic.proto.Schemas._
 import org.scalatest._
 
 import scala.reflect.ClassTag
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ProtobufGenericSpec extends FlatSpec with Matchers {
+class ProtobufGenericSpec extends AnyFlatSpec with Matchers {
   def roundTrip[T <: Message: ClassTag](record: T): Unit = {
     val schema = Schema.of[T]
     val schemaCopy = Schema.fromJson(schema.toJson)

@@ -3,8 +3,10 @@ package me.lyh.protobuf.generic
 import org.scalatest._
 
 import scala.util.Random
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class Base64Spec extends FlatSpec with Matchers {
+class Base64Spec extends AnyFlatSpec with Matchers {
   private def nextBytes: Array[Byte] = {
     val bytes = new Array[Byte](Random.nextInt(100) + 1)
     Random.nextBytes(bytes)
