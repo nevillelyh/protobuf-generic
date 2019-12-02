@@ -4,21 +4,21 @@ matrix:
     # Latest Protobuf, latest JDK and cross Scala versions
     - scala: 2.11.12
       jdk: openjdk8
-      env: PROTO=3.10.1
+      env: PROTO=3.10.0
 
     - scala: 2.12.10
       jdk: openjdk8
-      env: PROTO=3.10.1
+      env: PROTO=3.10.0
     - scala: 2.12.10
       jdk: openjdk11
-      env: PROTO=3.10.1
+      env: PROTO=3.10.0
 
     - scala: 2.13.1
       jdk: openjdk8
-      env: PROTO=3.10.1
+      env: PROTO=3.10.0
     - scala: 2.13.1
       jdk: openjdk11
-      env: PROTO=3.10.1
+      env: PROTO=3.10.0
 
     # Previous Protobuf versions
     - scala: 2.12.10
