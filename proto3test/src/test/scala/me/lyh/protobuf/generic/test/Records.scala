@@ -25,7 +25,7 @@ object Records {
     .setBoolField(true)
     .setStringField("hello")
     .setBytesField(ByteString.copyFromUtf8("world"))
-    .setColorField(Color.BLACK)
+    .setColorField(Color.WHITE)
     .build()
 
   val optionalEmpty = Optional.getDefaultInstance
@@ -105,7 +105,7 @@ object Records {
     OneOf.newBuilder().setBoolField(true).build(),
     OneOf.newBuilder().setStringField("hello").build(),
     OneOf.newBuilder().setBytesField(ByteString.copyFromUtf8("world")).build(),
-    OneOf.newBuilder().setColorField(Color.BLACK).build()
+    OneOf.newBuilder().setColorField(Color.WHITE).build()
   )
 
   val mixed = Mixed
@@ -113,7 +113,7 @@ object Records {
     .setDoubleFieldO(math.Pi)
     .setStringFieldO("hello")
     .setBytesFieldO(ByteString.copyFromUtf8("world"))
-    .setColorFieldO(Color.BLACK)
+    .setColorFieldO(Color.WHITE)
     .addAllDoubleFieldR(jList(math.Pi, -math.Pi))
     .addAllStringFieldR(jList("hello", "world"))
     .addAllBytesFieldR(jList(ByteString.copyFromUtf8("hello"), ByteString.copyFromUtf8("world")))
@@ -126,7 +126,7 @@ object Records {
     .newBuilder()
     .setDoubleFieldO(math.Pi)
     .addAllDoubleFieldR(jList(math.Pi, -math.Pi))
-    .setColorFieldO(Color.BLACK)
+    .setColorFieldO(Color.WHITE)
     .addAllColorFieldR(jList(Color.BLACK, Color.WHITE))
     .setMixedFieldO(mixed)
     .addAllMixedFieldR(jList(mixed, mixedEmpty))
