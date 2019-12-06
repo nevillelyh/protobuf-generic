@@ -37,9 +37,23 @@ class FieldReaderSpec extends AnyFlatSpec with Matchers {
   )
 
   val expected: List[Any] = List(
-    math.Pi, math.E.toFloat,
-    10, 15, 20, 25, 30, 35, 40, 45, 50, 55,
-    true, "hello", ByteString.copyFromUtf8("world"), "WHITE")
+    math.Pi,
+    math.E.toFloat,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    true,
+    "hello",
+    ByteString.copyFromUtf8("world"),
+    "WHITE"
+  )
 
   "FieldReader" should "read required" in {
     read[Required](Records.required, fields, expected)
@@ -47,13 +61,17 @@ class FieldReaderSpec extends AnyFlatSpec with Matchers {
 
   it should "read optional" in {
     read[Optional](Records.optional, fields, expected)
-    read[Optional](Records.optionalEmpty, fields, List(
-      0.0, 0.0f, 0, 0L, 0, 0L, 0, 0L, 0, 0L, 0, 0L, false, "", ByteString.EMPTY, "BLACK"))
+    read[Optional](
+      Records.optionalEmpty,
+      fields,
+      List(0.0, 0.0f, 0, 0L, 0, 0L, 0, 0L, 0, 0L, 0, 0L, false, "", ByteString.EMPTY, "BLACK")
+    )
   }
 
   it should "read oneofs" in {
-    (Records.oneOfs.drop(1) zip (fields zip expected)).foreach { case (r, (f, e)) =>
-      read[OneOf](r, List(f), List(e))
+    (Records.oneOfs.drop(1) zip (fields zip expected)).foreach {
+      case (r, (f, e)) =>
+        read[OneOf](r, List(f), List(e))
     }
   }
 
@@ -74,20 +92,46 @@ class FieldReaderSpec extends AnyFlatSpec with Matchers {
       "mixed_field_o.double_field_o",
       "mixed_field_o.string_field_o",
       "mixed_field_o.bytes_field_o",
-      "mixed_field_o.color_field_o",
+      "mixed_field_o.color_field_o"
     )
     val expected = List(
-      math.Pi, "hello", ByteString.copyFromUtf8("world"), "WHITE",
-      math.Pi, "hello", ByteString.copyFromUtf8("world"), "WHITE",
-      math.Pi, "hello", ByteString.copyFromUtf8("world"), "WHITE",
-      math.Pi, "hello", ByteString.copyFromUtf8("world"), "WHITE")
+      math.Pi,
+      "hello",
+      ByteString.copyFromUtf8("world"),
+      "WHITE",
+      math.Pi,
+      "hello",
+      ByteString.copyFromUtf8("world"),
+      "WHITE",
+      math.Pi,
+      "hello",
+      ByteString.copyFromUtf8("world"),
+      "WHITE",
+      math.Pi,
+      "hello",
+      ByteString.copyFromUtf8("world"),
+      "WHITE"
+    )
     read[Nested](Records.nested, fields, expected)
 
     val expectedEmpty = List(
-      math.Pi, "hello", ByteString.copyFromUtf8("world"), "WHITE",
-      math.Pi, "hello", ByteString.copyFromUtf8("world"), "WHITE",
-      0.0, "", ByteString.EMPTY, "BLACK",
-      0.0, "", ByteString.EMPTY, "BLACK")
+      math.Pi,
+      "hello",
+      ByteString.copyFromUtf8("world"),
+      "WHITE",
+      math.Pi,
+      "hello",
+      ByteString.copyFromUtf8("world"),
+      "WHITE",
+      0.0,
+      "",
+      ByteString.EMPTY,
+      "BLACK",
+      0.0,
+      "",
+      ByteString.EMPTY,
+      "BLACK"
+    )
     read[Nested](Records.nestedEmpty, fields, expectedEmpty)
   }
 }

@@ -29,7 +29,12 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
     result
   }
 
-  private def read(input: CodedInputStream, messageSchema: MessageSchema, ids: List[Int], result: Array[Any]): Unit = {
+  private def read(
+    input: CodedInputStream,
+    messageSchema: MessageSchema,
+    ids: List[Int],
+    result: Array[Any]
+  ): Unit = {
     def readValue(in: CodedInputStream, field: Field): Any = field.`type` match {
       case Type.FLOAT    => in.readFloat()
       case Type.DOUBLE   => in.readDouble()
@@ -75,7 +80,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
   }
 
   /** Field path e.g. "a.b.c" to reverse ids e.g. `3 :: 2 :: 1 :: Nil` and default value. */
-  private def prepareField(field: String): (List[Int], Any)  = {
+  private def prepareField(field: String): (List[Int], Any) = {
     val path = field.split('.')
     var ids = List.empty[Int]
     var msgSchema = rootSchema
@@ -119,6 +124,6 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
     case Type.STRING   => ""
     case Type.BYTES    => ByteString.EMPTY
     case Type.ENUM     => schema.enums(field.schema.get).values(0)
-    case t => throw new IllegalArgumentException(s"Unsupported type: $t")
+    case t             => throw new IllegalArgumentException(s"Unsupported type: $t")
   }
 }
