@@ -1,6 +1,5 @@
 package me.lyh.protobuf.generic
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.google.protobuf.DescriptorProtos.FieldDescriptorProto.Label._
