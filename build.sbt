@@ -91,6 +91,7 @@ lazy val proto2Test: Project = Project(
   .dependsOn(
     core
   )
+
 lazy val proto3Test: Project = Project(
   "proto3test",
   file("proto3test")
@@ -103,6 +104,24 @@ lazy val proto3Test: Project = Project(
   )
   .dependsOn(
     core
+  )
+
+lazy val jmh: Project = Project(
+  "jmh",
+  file("jmh")
+).enablePlugins(JmhPlugin)
+  .settings(
+    commonSettings ++ noProto3Settings,
+    sourceDirectory in Jmh := (sourceDirectory in Test).value,
+    classDirectory in Jmh := (classDirectory in Test).value,
+    dependencyClasspath in Jmh := (dependencyClasspath in Test).value,
+    // rewire tasks, so that 'jmh:run' automatically invokes 'jmh:compile'
+    // (otherwise a clean 'jmh:run' would fail)
+    compile in Jmh := (compile in Jmh).dependsOn(compile in Test).value,
+    run in Jmh := (run in Jmh).dependsOn(compile in Jmh).evaluated
+  )
+  .dependsOn(
+    proto3Test % "test->test"
   )
 
 val proto3Settings = Seq(

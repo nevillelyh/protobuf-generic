@@ -45,7 +45,7 @@ object Records {
     .setBoolField(true)
     .setStringField("hello")
     .setBytesField(ByteString.copyFromUtf8("world"))
-    .setColorField(Color.BLACK)
+    .setColorField(Color.WHITE)
     .build()
 
   val optionalEmpty = Optional.getDefaultInstance
@@ -125,7 +125,7 @@ object Records {
     OneOf.newBuilder().setBoolField(true).build(),
     OneOf.newBuilder().setStringField("hello").build(),
     OneOf.newBuilder().setBytesField(ByteString.copyFromUtf8("world")).build(),
-    OneOf.newBuilder().setColorField(Color.BLACK).build()
+    OneOf.newBuilder().setColorField(Color.WHITE).build()
   )
 
   val mixed = Mixed
@@ -133,11 +133,11 @@ object Records {
     .setDoubleField(math.Pi)
     .setStringField("hello")
     .setBytesField(ByteString.copyFromUtf8("world"))
-    .setColorField(Color.BLACK)
+    .setColorField(Color.WHITE)
     .setDoubleFieldO(math.Pi)
     .setStringFieldO("hello")
     .setBytesFieldO(ByteString.copyFromUtf8("world"))
-    .setColorFieldO(Color.BLACK)
+    .setColorFieldO(Color.WHITE)
     .addAllDoubleFieldR(jList(math.Pi, -math.Pi))
     .addAllStringFieldR(jList("hello", "world"))
     .addAllBytesFieldR(jList(ByteString.copyFromUtf8("hello"), ByteString.copyFromUtf8("world")))
@@ -149,7 +149,7 @@ object Records {
     .setDoubleField(math.Pi)
     .setStringField("hello")
     .setBytesField(ByteString.copyFromUtf8("world"))
-    .setColorField(Color.BLACK)
+    .setColorField(Color.WHITE)
     .build()
 
   val nested = Nested
@@ -157,8 +157,8 @@ object Records {
     .setDoubleField(math.Pi)
     .setDoubleFieldO(math.Pi)
     .addAllDoubleFieldR(jList(math.Pi, -math.Pi))
-    .setColorField(Color.BLACK)
-    .setColorFieldO(Color.BLACK)
+    .setColorField(Color.WHITE)
+    .setColorFieldO(Color.WHITE)
     .addAllColorFieldR(jList(Color.BLACK, Color.WHITE))
     .setMixedField(mixed)
     .setMixedFieldO(mixed)
@@ -168,7 +168,7 @@ object Records {
   val nestedEmpty = Nested
     .newBuilder()
     .setDoubleField(math.Pi)
-    .setColorField(Color.BLACK)
+    .setColorField(Color.WHITE)
     .setMixedField(mixed)
     .build()
 
