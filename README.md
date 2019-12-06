@@ -16,7 +16,7 @@ import me.lyh.protobuf.generic._
 
 val schema1 = Schema.of[MyRecord]  // generic representation of the protobuf schema
 val jsonString = schema1.toJson  // serialize to JSON
-val schema2 = Schema.fromJson(jsonStrong)  // deserialize from JSON
+val schema2 = Schema.fromJson(jsonString)  // deserialize from JSON
 
 // read protobuf binary without original class
 val bytes1: Array[Byte] = // binary MyRecord
