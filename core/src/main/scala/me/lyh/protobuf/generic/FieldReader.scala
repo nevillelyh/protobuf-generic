@@ -35,29 +35,6 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
     ids: List[Int],
     result: Array[Any]
   ): Unit = {
-    def readValue(in: CodedInputStream, field: Field): Any = field.`type` match {
-      case Type.FLOAT    => in.readFloat()
-      case Type.DOUBLE   => in.readDouble()
-      case Type.FIXED32  => in.readFixed32()
-      case Type.FIXED64  => in.readFixed64()
-      case Type.INT32    => in.readInt32()
-      case Type.INT64    => in.readInt64()
-      case Type.UINT32   => in.readUInt32()
-      case Type.UINT64   => in.readUInt64()
-      case Type.SFIXED32 => in.readSFixed32()
-      case Type.SFIXED64 => in.readSFixed64()
-      case Type.SINT32   => in.readSInt32()
-      case Type.SINT64   => in.readSInt64()
-      case Type.BOOL     => in.readBool()
-      case Type.STRING   => in.readString()
-      case Type.BYTES    => ByteString.copyFrom(in.readByteArray())
-      case Type.ENUM     => schema.enums(field.schema.get).values(in.readEnum())
-      case Type.MESSAGE =>
-        val nestedIn = CodedInputStream.newInstance(in.readByteBuffer())
-        read(nestedIn, schema.messages(field.schema.get), field.id :: ids, result)
-      case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
-    }
-
     while (!input.isAtEnd) {
       val tag = input.readTag()
       val id = WireFormat.getTagFieldNumber(tag)
@@ -67,16 +44,55 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
         if (field.packed) {
           val bytesIn = CodedInputStream.newInstance(input.readByteBuffer())
           while (!bytesIn.isAtEnd) {
-            readValue(bytesIn, field)
+            readValue(bytesIn, field, ids, result, true)
           }
         } else {
-          readValue(input, field)
+          readValue(input, field, ids, result, true)
         }
       } else {
-        val value = readValue(input, field)
+        val value = readValue(input, field, ids, result, false)
         idxMap.get(id :: ids).foreach(i => result(i) = value)
       }
     }
+  }
+
+  private def readValue(in: CodedInputStream, field: Field,
+                        ids: List[Int],
+                        result: Array[Any],
+                        discard: Boolean): Any = field.`type` match {
+    case Type.FLOAT    => in.readFloat()
+    case Type.DOUBLE   => in.readDouble()
+    case Type.FIXED32  => in.readFixed32()
+    case Type.FIXED64  => in.readFixed64()
+    case Type.INT32    => in.readInt32()
+    case Type.INT64    => in.readInt64()
+    case Type.UINT32   => in.readUInt32()
+    case Type.UINT64   => in.readUInt64()
+    case Type.SFIXED32 => in.readSFixed32()
+    case Type.SFIXED64 => in.readSFixed64()
+    case Type.SINT32   => in.readSInt32()
+    case Type.SINT64   => in.readSInt64()
+    case Type.BOOL     => in.readBool()
+    case Type.STRING   => in.readString()
+    case Type.BYTES =>
+      if (discard) {
+        in.skipRawBytes(in.readRawVarint32())
+        null
+      } else {
+        in.readBytes()
+      }
+    case Type.ENUM =>
+      val enum = in.readEnum()
+      if (discard) null else schema.enums(field.schema.get).values(enum)
+    case Type.MESSAGE =>
+      if (discard) {
+        in.skipRawBytes(in.readRawVarint32())
+        null
+      } else {
+        val nestedIn = CodedInputStream.newInstance(in.readByteBuffer())
+        read(nestedIn, schema.messages(field.schema.get), field.id :: ids, result)
+      }
+    case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
   }
 
   /** Field path e.g. "a.b.c" to reverse ids e.g. `3 :: 2 :: 1 :: Nil` and default value. */
