@@ -56,10 +56,13 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
     }
   }
 
-  private def readValue(in: CodedInputStream, field: Field,
-                        ids: List[Int],
-                        result: Array[Any],
-                        discard: Boolean): Any = field.`type` match {
+  private def readValue(
+    in: CodedInputStream,
+    field: Field,
+    ids: List[Int],
+    result: Array[Any],
+    discard: Boolean
+  ): Any = field.`type` match {
     case Type.FLOAT    => in.readFloat()
     case Type.DOUBLE   => in.readDouble()
     case Type.FIXED32  => in.readFixed32()
