@@ -26,29 +26,6 @@ class GenericReader(val schema: Schema) {
     read(CodedInputStream.newInstance(input), rootSchema)
 
   private def read(input: CodedInputStream, messageSchema: MessageSchema): GenericRecord = {
-    def readValue(in: CodedInputStream, field: Field): Any = field.`type` match {
-      case Type.FLOAT    => in.readFloat()
-      case Type.DOUBLE   => in.readDouble()
-      case Type.FIXED32  => in.readFixed32()
-      case Type.FIXED64  => in.readFixed64()
-      case Type.INT32    => in.readInt32()
-      case Type.INT64    => in.readInt64()
-      case Type.UINT32   => in.readUInt32()
-      case Type.UINT64   => in.readUInt64()
-      case Type.SFIXED32 => in.readSFixed32()
-      case Type.SFIXED64 => in.readSFixed64()
-      case Type.SINT32   => in.readSInt32()
-      case Type.SINT64   => in.readSInt64()
-      case Type.BOOL     => in.readBool()
-      case Type.STRING   => in.readString()
-      case Type.BYTES    => Base64.encode(in.readByteArray())
-      case Type.ENUM     => schema.enums(field.schema.get).values(in.readEnum())
-      case Type.MESSAGE =>
-        val nestedIn = CodedInputStream.newInstance(in.readByteBuffer())
-        read(nestedIn, schema.messages(field.schema.get))
-      case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
-    }
-
     val map = new JTreeMap[java.lang.Integer, Any]()
     while (!input.isAtEnd) {
       val tag = input.readTag()
@@ -76,5 +53,28 @@ class GenericReader(val schema: Schema) {
     val result = new JLinkedHashMap[String, Any]()
     map.asScala.foreach(kv => result.put(messageSchema.fields(kv._1).name, kv._2))
     result
+  }
+
+  private def readValue(in: CodedInputStream, field: Field): Any = field.`type` match {
+    case Type.FLOAT    => in.readFloat()
+    case Type.DOUBLE   => in.readDouble()
+    case Type.FIXED32  => in.readFixed32()
+    case Type.FIXED64  => in.readFixed64()
+    case Type.INT32    => in.readInt32()
+    case Type.INT64    => in.readInt64()
+    case Type.UINT32   => in.readUInt32()
+    case Type.UINT64   => in.readUInt64()
+    case Type.SFIXED32 => in.readSFixed32()
+    case Type.SFIXED64 => in.readSFixed64()
+    case Type.SINT32   => in.readSInt32()
+    case Type.SINT64   => in.readSInt64()
+    case Type.BOOL     => in.readBool()
+    case Type.STRING   => in.readString()
+    case Type.BYTES    => Base64.encode(in.readByteArray())
+    case Type.ENUM     => schema.enums(field.schema.get).values(in.readEnum())
+    case Type.MESSAGE =>
+      val nestedIn = CodedInputStream.newInstance(in.readByteBuffer())
+      read(nestedIn, schema.messages(field.schema.get))
+    case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
   }
 }
