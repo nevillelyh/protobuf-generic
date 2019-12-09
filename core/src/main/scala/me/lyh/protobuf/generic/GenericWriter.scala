@@ -33,7 +33,34 @@ class GenericWriter(val schema: Schema) {
     output: CodedOutputStream,
     messageSchema: MessageSchema
   ): Unit = {
-    def writeValue(out: CodedOutputStream, field: Field, value: Any): Unit = field.`type` match {
+    val fieldMap = messageSchema.fields.map(kv => (kv._2.name, kv._2))
+    record.asScala.foreach {
+      case (key, value) =>
+        val field = fieldMap(key)
+        val wt = wireType(field.`type`)
+        if (field.label == Label.REPEATED) {
+          val list = value.asInstanceOf[java.util.ArrayList[Any]]
+          if (field.packed) {
+            val baos = new ByteArrayOutputStream()
+            val bytesOut = CodedOutputStream.newInstance(baos)
+            list.asScala.foreach(v => writeValue(bytesOut, field, v))
+            bytesOut.flush()
+            output.writeByteArray(field.id, baos.toByteArray)
+          } else {
+            list.asScala.foreach { v =>
+              output.writeTag(field.id, wt)
+              writeValue(output, field, v)
+            }
+          }
+        } else {
+          output.writeTag(field.id, wt)
+          writeValue(output, field, value)
+        }
+    }
+  }
+
+  private def writeValue(out: CodedOutputStream, field: Field, value: Any): Unit =
+    field.`type` match {
       case Type.FLOAT    => out.writeFloatNoTag(value.toString.toFloat)
       case Type.DOUBLE   => out.writeDoubleNoTag(value.toString.toDouble)
       case Type.FIXED32  => out.writeFixed32NoTag(value.toString.toInt)
@@ -61,32 +88,6 @@ class GenericWriter(val schema: Schema) {
         out.writeByteArrayNoTag(baos.toByteArray)
       case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
     }
-
-    val fieldMap = messageSchema.fields.map(kv => (kv._2.name, kv._2))
-    record.asScala.foreach {
-      case (key, value) =>
-        val field = fieldMap(key)
-        val wt = wireType(field.`type`)
-        if (field.label == Label.REPEATED) {
-          val list = value.asInstanceOf[java.util.ArrayList[Any]]
-          if (field.packed) {
-            val baos = new ByteArrayOutputStream()
-            val bytesOut = CodedOutputStream.newInstance(baos)
-            list.asScala.foreach(v => writeValue(bytesOut, field, v))
-            bytesOut.flush()
-            output.writeByteArray(field.id, baos.toByteArray)
-          } else {
-            list.asScala.foreach { v =>
-              output.writeTag(field.id, wt)
-              writeValue(output, field, v)
-            }
-          }
-        } else {
-          output.writeTag(field.id, wt)
-          writeValue(output, field, value)
-        }
-    }
-  }
 
   private def wireType(fieldType: FieldDescriptor.Type): Int = {
     val t = fieldType match {
