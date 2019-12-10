@@ -1,6 +1,6 @@
 package me.lyh.protobuf.generic
 
-import java.io.InputStream
+import java.io.{InputStream, ObjectInputStream, ObjectOutputStream, OutputStream}
 import java.nio.ByteBuffer
 import java.util.{ArrayList => JArrayList, LinkedHashMap => JLinkedHashMap, TreeMap => JTreeMap}
 
@@ -13,17 +13,15 @@ object GenericReader {
   def of(schema: Schema): GenericReader = new GenericReader(schema)
 }
 
-class GenericReader(val schema: Schema) {
-  private val rootSchema = schema.messages(schema.name)
-
+class GenericReader(val schema: Schema) extends Serializable {
   def read(buf: Array[Byte]): GenericRecord =
-    read(CodedInputStream.newInstance(buf), rootSchema)
+    read(CodedInputStream.newInstance(buf), schema.root)
 
   def read(buf: ByteBuffer): GenericRecord =
-    read(CodedInputStream.newInstance(buf), rootSchema)
+    read(CodedInputStream.newInstance(buf), schema.root)
 
   def read(input: InputStream): GenericRecord =
-    read(CodedInputStream.newInstance(input), rootSchema)
+    read(CodedInputStream.newInstance(input), schema.root)
 
   private def read(input: CodedInputStream, messageSchema: MessageSchema): GenericRecord = {
     val map = new JTreeMap[java.lang.Integer, Any]()
@@ -77,4 +75,15 @@ class GenericReader(val schema: Schema) {
       read(nestedIn, schema.messages(field.schema.get))
     case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
   }
+
+  private def readObject(in: ObjectInputStream): Unit = {
+    val schema = Schema.fromJson(in.readUTF())
+
+    val schemaField = getClass.getDeclaredField("schema")
+    schemaField.setAccessible(true)
+    schemaField.set(this, schema)
+  }
+
+  private def writeObject(out: ObjectOutputStream): Unit =
+    out.writeUTF(schema.toJson)
 }

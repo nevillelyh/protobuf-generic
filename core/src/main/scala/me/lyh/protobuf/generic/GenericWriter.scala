@@ -1,6 +1,6 @@
 package me.lyh.protobuf.generic
 
-import java.io.{ByteArrayOutputStream, OutputStream}
+import java.io.{ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream, OutputStream}
 
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.{CodedOutputStream, WireFormat}
@@ -12,9 +12,7 @@ object GenericWriter {
   def of(schema: Schema): GenericWriter = new GenericWriter(schema)
 }
 
-class GenericWriter(val schema: Schema) {
-  private val rootSchema = schema.messages(schema.name)
-
+class GenericWriter(val schema: Schema) extends Serializable {
   def write(record: GenericRecord): Array[Byte] = {
     val baos = new ByteArrayOutputStream()
     write(record, baos)
@@ -24,7 +22,7 @@ class GenericWriter(val schema: Schema) {
 
   def write(record: GenericRecord, output: OutputStream): Unit = {
     val cos = CodedOutputStream.newInstance(output)
-    write(record, cos, rootSchema)
+    write(record, cos, schema.root)
     cos.flush()
   }
 
@@ -112,4 +110,15 @@ class GenericWriter(val schema: Schema) {
     }
     t.getWireType
   }
+
+  private def readObject(in: ObjectInputStream): Unit = {
+    val schema = Schema.fromJson(in.readUTF())
+
+    val schemaField = getClass.getDeclaredField("schema")
+    schemaField.setAccessible(true)
+    schemaField.set(this, schema)
+  }
+
+  private def writeObject(out: ObjectOutputStream): Unit =
+    out.writeUTF(schema.toJson)
 }

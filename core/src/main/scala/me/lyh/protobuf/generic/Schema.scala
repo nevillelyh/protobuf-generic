@@ -13,7 +13,9 @@ case class Schema(
   name: String,
   messages: Map[String, MessageSchema],
   enums: Map[String, EnumSchema]
-)
+) {
+  val root: MessageSchema = messages(name)
+}
 
 sealed trait DescriptorSchema
 

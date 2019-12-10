@@ -1,6 +1,6 @@
 package me.lyh.protobuf.generic
 
-import java.io.InputStream
+import java.io.{InputStream, ObjectInputStream, ObjectOutputStream}
 import java.nio.ByteBuffer
 
 import com.google.protobuf.{ByteString, CodedInputStream, WireFormat}
@@ -10,8 +10,7 @@ object FieldReader {
   def of(schema: Schema, fields: Seq[String]): FieldReader = new FieldReader(schema, fields)
 }
 
-class FieldReader(val schema: Schema, val fields: Seq[String]) {
-  private val rootSchema = schema.messages(schema.name)
+class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializable {
   private val (idxMap, defaults) = {
     val xs = fields.map(prepareField)
     (xs.map(_._1).zipWithIndex.toMap, xs.map(_._2))
@@ -25,7 +24,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
 
   private def read(input: CodedInputStream): Array[Any] = {
     val result = defaults.toArray
-    read(input, rootSchema, Nil, result)
+    read(input, schema.root, Nil, result)
     result
   }
 
@@ -102,7 +101,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
   private def prepareField(field: String): (List[Int], Any) = {
     val path = field.split('.')
     var ids = List.empty[Int]
-    var msgSchema = rootSchema
+    var msgSchema = schema.root
     var i = 0
     var default: Any = null
     while (i < path.length) {
@@ -144,5 +143,32 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) {
     case Type.BYTES    => ByteString.EMPTY
     case Type.ENUM     => schema.enums(field.schema.get).values(0)
     case t             => throw new IllegalArgumentException(s"Unsupported type: $t")
+  }
+
+  private def readObject(in: ObjectInputStream): Unit = {
+    def set(name: String, value: Any): Unit = {
+      val f = getClass.getDeclaredField(name)
+      f.setAccessible(true)
+      f.set(this, value)
+    }
+
+    val schema = Schema.fromJson(in.readUTF())
+    val fields = (1 to in.readInt()).map(_ => in.readUTF())
+
+    set("schema", schema)
+    set("fields", fields)
+
+    val (idxMap, defaults) = {
+      val xs = fields.map(prepareField)
+      (xs.map(_._1).zipWithIndex.toMap, xs.map(_._2))
+    }
+    set("idxMap", idxMap)
+    set("defaults", defaults)
+  }
+
+  private def writeObject(out: ObjectOutputStream): Unit = {
+    out.writeUTF(schema.toJson)
+    out.writeInt(fields.size)
+    fields.foreach(out.writeUTF)
   }
 }
