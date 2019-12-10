@@ -15,12 +15,12 @@ class ProtobufGenericSpec extends AnyFlatSpec with Matchers {
   private val parser = JsonFormat.parser()
 
   def roundTrip[T <: Message: ClassTag](record: T): Unit = {
-    val schema = Schema.of[T]
+    val schema = SerializableUtils.ensureSerializable(Schema.of[T])
     val schemaCopy = Schema.fromJson(schema.toJson)
     schemaCopy shouldBe schema
 
-    val reader = GenericReader.of(schema)
-    val writer = GenericWriter.of(schema)
+    val reader = SerializableUtils.ensureSerializable(GenericReader.of(schema))
+    val writer = SerializableUtils.ensureSerializable(GenericWriter.of(schema))
     val jsonRecord = reader.read(record.toByteArray).toJson
     val bytes = writer.write(GenericRecord.fromJson(jsonRecord))
     val recordCopy = ProtobufType[T].parseFrom(bytes)

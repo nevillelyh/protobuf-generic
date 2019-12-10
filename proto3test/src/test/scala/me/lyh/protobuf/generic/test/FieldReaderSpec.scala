@@ -11,8 +11,8 @@ import scala.reflect.ClassTag
 
 class FieldReaderSpec extends AnyFlatSpec with Matchers {
   def read[T <: Message: ClassTag](record: T, fields: List[String], expected: List[Any]): Unit = {
-    val schema = Schema.of[T]
-    val reader = FieldReader.of(schema, fields)
+    val schema = SerializableUtils.ensureSerializable(Schema.of[T])
+    val reader = SerializableUtils.ensureSerializable(FieldReader.of(schema, fields))
     val actual = reader.read(record.toByteArray)
     actual.toList shouldBe expected
   }
