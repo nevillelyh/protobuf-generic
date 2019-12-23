@@ -125,24 +125,28 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
   }
 
   // FIXME: proto2 custom defaults, e.g. `optional int32 a = 0 [default = 1];`
-  private def getDefault(field: Field): Any = field.`type` match {
-    case Type.FLOAT    => 0.0f
-    case Type.DOUBLE   => 0.0
-    case Type.FIXED32  => 0
-    case Type.FIXED64  => 0L
-    case Type.INT32    => 0
-    case Type.INT64    => 0L
-    case Type.UINT32   => 0
-    case Type.UINT64   => 0L
-    case Type.SFIXED32 => 0
-    case Type.SFIXED64 => 0L
-    case Type.SINT32   => 0
-    case Type.SINT64   => 0L
-    case Type.BOOL     => false
-    case Type.STRING   => ""
-    case Type.BYTES    => ByteString.EMPTY
-    case Type.ENUM     => schema.enums(field.schema.get).values(0)
-    case t             => throw new IllegalArgumentException(s"Unsupported type: $t")
+  private def getDefault(field: Field): Any = field.default match {
+    case Some(v) => v
+    case None =>
+      field.`type` match {
+        case Type.FLOAT    => 0.0f
+        case Type.DOUBLE   => 0.0
+        case Type.FIXED32  => 0
+        case Type.FIXED64  => 0L
+        case Type.INT32    => 0
+        case Type.INT64    => 0L
+        case Type.UINT32   => 0
+        case Type.UINT64   => 0L
+        case Type.SFIXED32 => 0
+        case Type.SFIXED64 => 0L
+        case Type.SINT32   => 0
+        case Type.SINT64   => 0L
+        case Type.BOOL     => false
+        case Type.STRING   => ""
+        case Type.BYTES    => ByteString.EMPTY
+        case Type.ENUM     => schema.enums(field.schema.get).values(0)
+        case t             => throw new IllegalArgumentException(s"Unsupported type: $t")
+      }
   }
 
   private def readObject(in: ObjectInputStream): Unit = {

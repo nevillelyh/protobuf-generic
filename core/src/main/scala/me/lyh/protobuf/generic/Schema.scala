@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.google.protobuf.DescriptorProtos.FieldDescriptorProto.Label._
 import com.google.protobuf.Descriptors.{Descriptor, EnumDescriptor, FieldDescriptor}
-import com.google.protobuf.{Message, MessageOrBuilder}
+import com.google.protobuf.{ByteString, Descriptors, Message, MessageOrBuilder}
 
 import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
@@ -34,6 +34,7 @@ case class Field(
   label: Label,
   `type`: FieldDescriptor.Type,
   packed: Boolean,
+  default: Option[AnyRef],
   schema: Option[String],
   options: Option[Map[String, String]]
 )
@@ -56,9 +57,31 @@ object Schema {
   private def toSchemaMap(descriptor: Descriptor): Map[String, DescriptorSchema] = {
     val (fields, schemas) = descriptor.getFields.asScala
       .foldLeft(Map.empty[Int, Field], Map.empty[String, DescriptorSchema]) { (z, fd) =>
+        val default = if (fd.hasDefaultValue) {
+          val v = fd.getDefaultValue
+          val json = fd.getType match {
+            case FieldDescriptor.Type.ENUM =>
+              v.asInstanceOf[Descriptors.EnumValueDescriptor].getName
+            case FieldDescriptor.Type.BYTES =>
+              Base64.encode(v.asInstanceOf[ByteString].toByteArray)
+            case _ => v
+          }
+          Some(json)
+        } else {
+          None
+        }
         val fieldOpts = optionMap(fd.getOptions)
         val f =
-          Field(fd.getNumber, fd.getName, getLabel(fd), fd.getType, fd.isPacked, None, fieldOpts)
+          Field(
+            fd.getNumber,
+            fd.getName,
+            getLabel(fd),
+            fd.getType,
+            fd.isPacked,
+            default,
+            None,
+            fieldOpts
+          )
         fd.getType match {
           case FieldDescriptor.Type.MESSAGE =>
             val n = fd.getMessageType.getFullName

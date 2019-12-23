@@ -50,6 +50,9 @@ class GenericReader(val schema: Schema) extends Serializable {
 
     val result = new JLinkedHashMap[String, Any]()
     map.asScala.foreach(kv => result.put(messageSchema.fields(kv._1).name, kv._2))
+    messageSchema.fields.valuesIterator
+      .filterNot(f => result.containsKey(f.name))
+      .foreach(f => f.default.foreach(result.put(f.name, _)))
     result
   }
 

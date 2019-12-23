@@ -51,8 +51,10 @@ class GenericWriter(val schema: Schema) extends Serializable {
             }
           }
         } else {
-          output.writeTag(field.id, wt)
-          writeValue(output, field, value)
+          if (!field.default.contains(value)) {
+            output.writeTag(field.id, wt)
+            writeValue(output, field, value)
+          }
         }
     }
   }

@@ -133,4 +133,44 @@ class FieldReaderSpec extends AnyFlatSpec with Matchers {
     )
     read[Nested](Records.nestedEmpty, fields, expectedEmpty)
   }
+
+  it should "read default values" in {
+    val fields = List(
+      "double_field",
+      "float_field",
+      "int32_field",
+      "int64_field",
+      "uint32_field",
+      "uint64_field",
+      "sint32_field",
+      "sint64_field",
+      "fixed32_field",
+      "fixed64_field",
+      "sfixed32_field",
+      "sfixed64_field",
+      "bool_field",
+      "string_field",
+      "bytes_field",
+      "color_field"
+    )
+    val expected = List(
+      101.0,
+      102.0f,
+      103,
+      104L,
+      105,
+      106L,
+      107,
+      108L,
+      109,
+      110L,
+      111,
+      112L,
+      true,
+      "hello",
+      Base64.encode(ByteString.copyFromUtf8("world").toByteArray),
+      "GREEN"
+    )
+    read[CustomDefaults](CustomDefaults.getDefaultInstance, fields, expected)
+  }
 }
