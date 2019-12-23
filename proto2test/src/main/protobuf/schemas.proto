@@ -181,3 +181,22 @@ message CustomOptionMessage {
     optional STATE state = 3 [(my_field_option_str) = "Field custom option"];
     optional string fooBar = 4;
 }
+
+message CustomDefaults {
+    optional double double_field = 1 [default = 101];
+    optional float float_field = 2 [default = 102];
+    optional int32 int32_field = 3 [default = 103];
+    optional int64 int64_field = 4 [default = 104];
+    optional uint32 uint32_field = 5 [default = 105];
+    optional uint64 uint64_field = 6 [default = 106];
+    optional sint32 sint32_field = 7 [default = 107];
+    optional sint64 sint64_field = 8 [default = 108];
+    optional fixed32 fixed32_field = 9 [default = 109];
+    optional fixed64 fixed64_field = 10 [default = 110];
+    optional sfixed32 sfixed32_field = 11 [default = 111];
+    optional sfixed64 sfixed64_field = 12 [default = 112];
+    optional bool bool_field = 13 [default = true];
+    optional string string_field = 14 [default = "hello"];
+    optional bytes bytes_field = 15 [default = "world"];
+    optional Color color_field = 16 [default = GREEN];
+}
