@@ -6,7 +6,6 @@ import java.nio.ByteBuffer
 import com.google.protobuf.Message
 import me.lyh.protobuf.generic._
 import me.lyh.protobuf.generic.proto.Schemas._
-import org.scalatest._
 
 import scala.reflect.ClassTag
 import org.scalatest.flatspec.AnyFlatSpec
