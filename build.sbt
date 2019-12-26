@@ -123,6 +123,7 @@ lazy val jmh: Project = Project(
     run in Jmh := (run in Jmh).dependsOn(compile in Jmh).evaluated
   )
   .dependsOn(
+    proto2Test % "test->test",
     proto3Test % "test->test"
   )
 
