@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream
 
 import com.google.protobuf.CodedInputStream
 import me.lyh.protobuf.generic._
-import me.lyh.protobuf.generic.proto.Schemas._
+import me.lyh.protobuf.generic.proto2.Schemas._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

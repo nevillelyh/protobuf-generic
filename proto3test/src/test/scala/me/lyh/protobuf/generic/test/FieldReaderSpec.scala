@@ -2,7 +2,7 @@ package me.lyh.protobuf.generic.test
 
 import com.google.protobuf.{ByteString, Message}
 import me.lyh.protobuf.generic._
-import me.lyh.protobuf.generic.proto.Schemas._
+import me.lyh.protobuf.generic.proto3.Schemas._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

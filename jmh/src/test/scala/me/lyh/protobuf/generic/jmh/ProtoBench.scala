@@ -3,7 +3,7 @@ package me.lyh.protobuf.generic.jmh
 import java.util.concurrent.TimeUnit
 
 import me.lyh.protobuf.generic._
-import me.lyh.protobuf.generic.proto.Schemas
+import me.lyh.protobuf.generic.proto3.Schemas
 import me.lyh.protobuf.generic.test.Records
 import org.openjdk.jmh.annotations._
 
