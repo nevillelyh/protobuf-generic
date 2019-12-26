@@ -3,7 +3,7 @@ syntax = "proto3";
 // custom options need descriptor file
 import "google/protobuf/descriptor.proto";
 
-package me.lyh.protobuf.generic.proto;
+package me.lyh.protobuf.generic.proto3;
 
 option optimize_for = SPEED;
 

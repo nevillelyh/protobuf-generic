@@ -3,7 +3,7 @@ package me.lyh.protobuf.generic.test
 import com.google.protobuf.Message
 import com.google.protobuf.util.JsonFormat
 import me.lyh.protobuf.generic._
-import me.lyh.protobuf.generic.proto.Schemas._
+import me.lyh.protobuf.generic.proto3.Schemas._
 
 import scala.reflect.ClassTag
 import org.scalatest.flatspec.AnyFlatSpec

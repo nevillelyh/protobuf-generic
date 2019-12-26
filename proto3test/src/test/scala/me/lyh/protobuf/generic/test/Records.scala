@@ -1,7 +1,7 @@
 package me.lyh.protobuf.generic.test
 
 import com.google.protobuf.ByteString
-import me.lyh.protobuf.generic.proto.Schemas._
+import me.lyh.protobuf.generic.proto3.Schemas._
 
 import scala.collection.JavaConverters._
 
