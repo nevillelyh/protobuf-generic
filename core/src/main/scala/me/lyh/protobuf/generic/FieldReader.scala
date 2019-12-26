@@ -124,7 +124,6 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
     (ids, default)
   }
 
-  // FIXME: proto2 custom defaults, e.g. `optional int32 a = 0 [default = 1];`
   private def getDefault(field: Field): Any = field.default match {
     case Some(v) => v
     case None =>
