@@ -47,8 +47,8 @@ val commonSettings = Seq(
 
 val protoSettings = Seq(
   version in ProtobufConfig := protobufVersion,
-  protobufRunProtoc in ProtobufConfig := (
-    args => com.github.os72.protocjar.Protoc.runProtoc(s"-v$protobufVersion" +: args.toArray)
+  protobufRunProtoc in ProtobufConfig := (args =>
+    com.github.os72.protocjar.Protoc.runProtoc(s"-v$protobufVersion" +: args.toArray)
   )
 )
 
