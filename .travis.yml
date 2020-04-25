@@ -4,29 +4,26 @@ matrix:
     # Latest Protobuf, latest JDK and cross Scala versions
     - scala: 2.11.12
       jdk: openjdk8
-      env: PROTO=3.10.0
+      env: PROTO=3.11.4
 
     - scala: 2.12.11
       jdk: openjdk8
-      env: PROTO=3.10.0
+      env: PROTO=3.11.4
     - scala: 2.12.11
       jdk: openjdk11
-      env: PROTO=3.10.0
+      env: PROTO=3.11.4
 
     - scala: 2.13.2
       jdk: openjdk8
-      env: PROTO=3.10.0
+      env: PROTO=3.11.4
     - scala: 2.13.2
       jdk: openjdk11
-      env: PROTO=3.10.0
+      env: PROTO=3.11.4
 
     # Previous Protobuf versions
     - scala: 2.12.11
       jdk: openjdk11
       env: PROTO=2.6.1
-    - scala: 2.12.11
-      jdk: openjdk11
-      env: PROTO=3.3.0
     - scala: 2.12.11
       jdk: openjdk11
       env: PROTO=3.5.1
@@ -42,6 +39,9 @@ matrix:
     - scala: 2.12.11
       jdk: openjdk11
       env: PROTO=3.9.2
+    - scala: 2.12.11
+      jdk: openjdk11
+      env: PROTO=3.10.0
 
 before_cache:
   # Tricks to avoid unnecessary cache updates
