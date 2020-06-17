@@ -62,13 +62,12 @@ lazy val root: Project = Project(
   "protobuf-generic-parent",
   file(".")
 ).settings(
-    commonSettings ++ noPublishSettings
-  )
-  .aggregate(
-    core,
-    proto2Test,
-    proto3Test
-  )
+  commonSettings ++ noPublishSettings
+).aggregate(
+  core,
+  proto2Test,
+  proto3Test
+)
 
 lazy val core: Project = Project(
   "protobuf-generic",
