@@ -98,7 +98,8 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
   }
 
   /**
-   * Field path e.g. "a.b.c" to reverse ids e.g. `3 :: 2 :: 1 :: Nil` and default value. */
+   * Field path e.g. "a.b.c" to reverse ids e.g. `3 :: 2 :: 1 :: Nil` and default value.
+   */
   private def prepareField(field: String): (List[Int], Any) = {
     val path = field.split('.')
     var ids = List.empty[Int]
