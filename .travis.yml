@@ -2,10 +2,6 @@ language: scala
 matrix:
   include:
     # Latest Protobuf, latest JDK and cross Scala versions
-    - scala: 2.11.12
-      jdk: openjdk8
-      env: PROTO=3.11.4
-
     - scala: 2.12.11
       jdk: openjdk8
       env: PROTO=3.11.4
