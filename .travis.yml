@@ -9,10 +9,10 @@ matrix:
       jdk: openjdk11
       env: PROTO=3.11.4
 
-    - scala: 2.13.2
+    - scala: 2.13.3
       jdk: openjdk8
       env: PROTO=3.11.4
-    - scala: 2.13.2
+    - scala: 2.13.3
       jdk: openjdk11
       env: PROTO=3.11.4
 
