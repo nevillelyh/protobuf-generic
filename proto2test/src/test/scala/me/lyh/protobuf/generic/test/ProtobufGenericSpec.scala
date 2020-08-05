@@ -88,4 +88,9 @@ class ProtobufGenericSpec extends AnyFlatSpec with Matchers {
       Base64.encode(ByteString.copyFromUtf8("world").toByteArray)
     record.get("color_field") shouldBe "GREEN"
   }
+
+  it should "round trip recursive" in {
+    roundTrip[Recursive1](Records.recursive1)
+    roundTrip[Recursive2](Records.recursive2)
+  }
 }

@@ -82,4 +82,9 @@ class ProtobufGenericSpec extends AnyFlatSpec with Matchers {
     test[CustomOptionMessage](Records.customOptionMessage)
     test[CustomOptionMessage](Records.customOptionMessageEmpty)
   }
+
+  it should "round trip recursive" in {
+    test[Recursive1](Records.recursive1)
+    test[Recursive2](Records.recursive2)
+  }
 }

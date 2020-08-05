@@ -181,4 +181,16 @@ object Records {
     .build()
 
   val customOptionMessageEmpty = CustomOptionMessage.getDefaultInstance
+
+  val recursive1 = Recursive1
+    .newBuilder()
+    .setFoo(1)
+    .setBar(Recursive1.newBuilder().setFoo(2))
+    .build()
+  val recursive2 = Recursive2
+    .newBuilder()
+    .setFoo(1)
+    .setBar(recursive1)
+    .setBaz(Recursive2.newBuilder().setFoo(2).setBar(recursive1))
+    .build()
 }

@@ -200,3 +200,14 @@ message CustomDefaults {
     optional bytes bytes_field = 15 [default = "world"];
     optional Color color_field = 16 [default = GREEN];
 }
+
+message Recursive1 {
+    optional int32 foo = 1;
+    optional Recursive1 bar = 2;
+}
+
+message Recursive2 {
+    optional int32 foo = 1;
+    optional Recursive1 bar = 2;
+    optional Recursive2 baz = 3;
+}

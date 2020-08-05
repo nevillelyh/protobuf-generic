@@ -155,3 +155,14 @@ message CustomOptionMessage {
     STATE state = 3 [(my_field_option_str) = "Field custom option"];
     string fooBar = 4;
 }
+
+message Recursive1 {
+    int32 foo = 1;
+    Recursive1 bar = 2;
+}
+
+message Recursive2 {
+    int32 foo = 1;
+    Recursive1 bar = 2;
+    Recursive2 baz = 3;
+}
