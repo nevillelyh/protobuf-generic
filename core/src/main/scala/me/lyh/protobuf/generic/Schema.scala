@@ -44,7 +44,7 @@ object Schema {
 
   def of[T <: Message: ClassTag]: Schema = {
     val descriptor = ProtobufType[T].descriptor
-    val m = toSchemaMap(descriptor)
+    val m = toSchemaMap(descriptor, Set(descriptor.getFullName))
     val messages = Map.newBuilder[String, MessageSchema]
     val enums = Map.newBuilder[String, EnumSchema]
     m.values.foreach {
@@ -54,7 +54,10 @@ object Schema {
     Schema(descriptor.getFullName, messages.result(), enums.result())
   }
 
-  private def toSchemaMap(descriptor: Descriptor): Map[String, DescriptorSchema] = {
+  private def toSchemaMap(
+    descriptor: Descriptor,
+    seen: Set[String]
+  ): Map[String, DescriptorSchema] = {
     val (fields, schemas) = descriptor.getFields.asScala
       .foldLeft(Map.empty[Int, Field], Map.empty[String, DescriptorSchema]) { (z, fd) =>
         val default = if (fd.hasDefaultValue) {
@@ -85,7 +88,7 @@ object Schema {
         fd.getType match {
           case FieldDescriptor.Type.MESSAGE =>
             val n = fd.getMessageType.getFullName
-            val s = toSchemaMap(fd.getMessageType)
+            val s = if (!seen(n)) toSchemaMap(fd.getMessageType, seen + n) else Map.empty
             (z._1 + (f.id -> f.copy(schema = Some(n))), z._2 ++ s)
           case FieldDescriptor.Type.ENUM =>
             val n = fd.getEnumType.getFullName
