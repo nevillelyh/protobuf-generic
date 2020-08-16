@@ -2,19 +2,16 @@ language: scala
 matrix:
   include:
     # Latest Protobuf, latest JDK and cross Scala versions
+    # Use `protobufVersion` in `build.sbt` instead of overriding with `PROTO`
     - scala: 2.12.12
       jdk: openjdk8
-      env: PROTO=3.11.4
     - scala: 2.12.12
       jdk: openjdk11
-      env: PROTO=3.11.4
 
     - scala: 2.13.3
       jdk: openjdk8
-      env: PROTO=3.11.4
     - scala: 2.13.3
       jdk: openjdk11
-      env: PROTO=3.11.4
 
     # Previous Protobuf versions
     - scala: 2.12.12
@@ -22,22 +19,13 @@ matrix:
       env: PROTO=2.6.1
     - scala: 2.12.12
       jdk: openjdk11
-      env: PROTO=3.5.1
-    - scala: 2.12.12
-      jdk: openjdk11
-      env: PROTO=3.6.0
-    - scala: 2.12.12
-      jdk: openjdk11
-      env: PROTO=3.7.1
-    - scala: 2.12.12
-      jdk: openjdk11
-      env: PROTO=3.8.0
-    - scala: 2.12.12
-      jdk: openjdk11
-      env: PROTO=3.9.2
-    - scala: 2.12.12
-      jdk: openjdk11
       env: PROTO=3.10.0
+    - scala: 2.12.12
+      jdk: openjdk11
+      env: PROTO=3.11.4
+    - scala: 2.12.12
+      jdk: openjdk11
+      env: PROTO=3.12.4
 
 before_cache:
   # Tricks to avoid unnecessary cache updates
@@ -52,7 +40,7 @@ cache:
     - $HOME/.sbt/boot
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION -Dprotobuf.version=$PROTO clean scalafmtSbtCheck scalafmtCheck test:scalafmtCheck coverage test coverageAggregate
+  - sbt ++$TRAVIS_SCALA_VERSION clean scalafmtSbtCheck scalafmtCheck test:scalafmtCheck coverage test coverageAggregate
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

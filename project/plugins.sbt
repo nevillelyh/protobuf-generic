@@ -8,13 +8,8 @@ addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.3.7")
 
 // each protoc-jar 3.x release contains only 1 3.x.x binary
 val protocJarVersion = sys.props("protobuf.version") match {
-  case "3.11.4" | null => "3.11.4"
-  case "3.10.0"        => "3.10.1"
-  case "3.9.2"         => "3.9.2"
-  case "3.8.0"         => "3.8.0"
-  case "3.7.1"         => "3.7.1"
-  case "3.6.0"         => "3.6.0"
-  case "3.5.1" | _     => "3.5.1.1"
+  case "3.10.0"     => "3.10.1"
+  case "3.11.4" | _ => "3.11.4" // Latest protoc available
 }
 
 libraryDependencies ++= Seq(
