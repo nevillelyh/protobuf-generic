@@ -32,30 +32,29 @@ class GenericWriter(val schema: Schema) extends Serializable {
     messageSchema: MessageSchema
   ): Unit = {
     val fieldMap = messageSchema.fields.map(kv => (kv._2.name, kv._2))
-    record.asScala.foreach {
-      case (key, value) =>
-        val field = fieldMap(key)
-        val wt = wireType(field.`type`)
-        if (field.label == Label.REPEATED) {
-          val list = value.asInstanceOf[java.util.ArrayList[Any]]
-          if (field.packed) {
-            val baos = new ByteArrayOutputStream()
-            val bytesOut = CodedOutputStream.newInstance(baos)
-            list.asScala.foreach(v => writeValue(bytesOut, field, v))
-            bytesOut.flush()
-            output.writeByteArray(field.id, baos.toByteArray)
-          } else {
-            list.asScala.foreach { v =>
-              output.writeTag(field.id, wt)
-              writeValue(output, field, v)
-            }
-          }
+    record.asScala.foreach { case (key, value) =>
+      val field = fieldMap(key)
+      val wt = wireType(field.`type`)
+      if (field.label == Label.REPEATED) {
+        val list = value.asInstanceOf[java.util.ArrayList[Any]]
+        if (field.packed) {
+          val baos = new ByteArrayOutputStream()
+          val bytesOut = CodedOutputStream.newInstance(baos)
+          list.asScala.foreach(v => writeValue(bytesOut, field, v))
+          bytesOut.flush()
+          output.writeByteArray(field.id, baos.toByteArray)
         } else {
-          if (!field.default.contains(value)) {
+          list.asScala.foreach { v =>
             output.writeTag(field.id, wt)
-            writeValue(output, field, value)
+            writeValue(output, field, v)
           }
         }
+      } else {
+        if (!field.default.contains(value)) {
+          output.writeTag(field.id, wt)
+          writeValue(output, field, value)
+        }
+      }
     }
   }
 

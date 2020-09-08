@@ -68,9 +68,8 @@ class FieldReaderSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "read oneofs" in {
-    (Records.oneOfs.drop(1) zip (fields zip expected)).foreach {
-      case (r, (f, e)) =>
-        read[OneOf](r, List(f), List(e))
+    (Records.oneOfs.drop(1) zip (fields zip expected)).foreach { case (r, (f, e)) =>
+      read[OneOf](r, List(f), List(e))
     }
   }
 
