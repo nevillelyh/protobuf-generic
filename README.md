@@ -1,7 +1,7 @@
 protobuf-generic
 ================
 
-[![Build Status](https://travis-ci.org/nevillelyh/protobuf-generic.svg?branch=master)](https://travis-ci.org/nevillelyh/protobuf-generic)
+[![Build Status](https://img.shields.io/github/workflow/status/nevillelyh/protobuf-generic/CI)](https://github.com/nevillelyh/protobuf-generic/actions?query=workflow%3ACI)
 [![codecov.io](https://codecov.io/github/nevillelyh/protobuf-generic/coverage.svg?branch=master)](https://codecov.io/github/nevillelyh/protobuf-generic?branch=master)
 [![GitHub license](https://img.shields.io/github/license/nevillelyh/protobuf-generic.svg)](./LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/me.lyh/protobuf-generic_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/me.lyh/protobuf-generic_2.13)
