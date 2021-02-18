@@ -3,7 +3,7 @@ val isProto3 = protobufVersion.startsWith("3.")
 
 val jacksonVersion = "2.12.1"
 val jsr305Version = "3.0.2"
-val scalaTestVersion = "3.2.3"
+val scalaTestVersion = "3.2.4"
 
 val commonSettings = Seq(
   organization := "me.lyh",
