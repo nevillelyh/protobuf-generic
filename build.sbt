@@ -11,7 +11,7 @@ val commonSettings = Seq(
   crossScalaVersions := Seq("2.12.13", "2.13.5"),
   scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
-  javacOptions in (Compile, doc) := Seq("-source", "1.8"),
+  Compile / doc / javacOptions := Seq("-source", "1.8"),
   libraryDependencies ++= Seq(
     "com.google.protobuf" % "protobuf-java" % protobufVersion % Provided,
     "com.google.code.findbugs" % "jsr305" % jsr305Version % Provided,
@@ -25,7 +25,7 @@ val commonSettings = Seq(
   releaseCrossBuild := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle := true,
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   sonatypeProfileName := "me.lyh",
   licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   homepage := Some(url("https://github.com/nevillelyh/protobuf-generic")),
@@ -46,8 +46,8 @@ val commonSettings = Seq(
 )
 
 val protoSettings = Seq(
-  version in ProtobufConfig := protobufVersion,
-  protobufRunProtoc in ProtobufConfig := (args =>
+  ProtobufConfig / version := protobufVersion,
+  ProtobufConfig / protobufRunProtoc := (args =>
     com.github.os72.protocjar.Protoc.runProtoc(s"-v$protobufVersion" +: args.toArray)
   )
 )
@@ -86,7 +86,7 @@ lazy val proto2Test: Project = Project(
     commonSettings ++ protoSettings ++ noPublishSettings,
     Compile / doc / sources := List(),
     Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
-    protobufProtocOptions in ProtobufConfig ++= Seq("--include_std_types")
+    ProtobufConfig / protobufProtocOptions ++= Seq("--include_std_types")
   )
   .dependsOn(
     core
@@ -100,7 +100,7 @@ lazy val proto3Test: Project = Project(
     commonSettings ++ protoSettings ++ noPublishSettings,
     Compile / doc / sources := List(),
     Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
-    protobufProtocOptions in ProtobufConfig ++= Seq("--include_std_types"),
+    ProtobufConfig / protobufProtocOptions ++= Seq("--include_std_types"),
     if (isProto3) proto3Settings else noProto3Settings
   )
   .dependsOn(
@@ -113,13 +113,13 @@ lazy val jmh: Project = Project(
 ).enablePlugins(JmhPlugin)
   .settings(
     commonSettings ++ noProto3Settings,
-    sourceDirectory in Jmh := (sourceDirectory in Test).value,
-    classDirectory in Jmh := (classDirectory in Test).value,
-    dependencyClasspath in Jmh := (dependencyClasspath in Test).value,
+    Jmh / sourceDirectory := (Test / sourceDirectory).value,
+    Jmh / classDirectory := (Test / classDirectory).value,
+    Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
     // rewire tasks, so that 'jmh:run' automatically invokes 'jmh:compile'
     // (otherwise a clean 'jmh:run' would fail)
-    compile in Jmh := (compile in Jmh).dependsOn(compile in Test).value,
-    run in Jmh := (run in Jmh).dependsOn(compile in Jmh).evaluated
+    Jmh / compile := (Jmh / compile).dependsOn(Test / compile).value,
+    Jmh / run := (Jmh / run).dependsOn(Jmh / compile).evaluated
   )
   .dependsOn(
     proto2Test % "test->test",
