@@ -1,5 +1,4 @@
 val protobufVersion = sys.env.get("PROTO").getOrElse("3.17.2")
-val isProto3 = protobufVersion.startsWith("3.")
 
 val jacksonVersion = "2.12.3"
 val jsr305Version = "3.0.2"
@@ -45,13 +44,6 @@ val commonSettings = Seq(
   )
 )
 
-val protoSettings = Seq(
-  ProtobufConfig / version := protobufVersion,
-  ProtobufConfig / protobufRunProtoc := (args =>
-    com.github.os72.protocjar.Protoc.runProtoc(s"-v$protobufVersion" +: args.toArray)
-  )
-)
-
 val noPublishSettings = Seq(
   publish := {},
   publishLocal := {},
@@ -81,56 +73,52 @@ lazy val core: Project = Project(
 lazy val proto2Test: Project = Project(
   "proto2test",
   file("proto2test")
-).enablePlugins(ProtobufPlugin)
-  .settings(
-    commonSettings ++ protoSettings ++ noPublishSettings,
-    Compile / doc / sources := List(),
-    Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
-    ProtobufConfig / protobufProtocOptions ++= Seq("--include_std_types")
+).settings(
+  commonSettings ++ noPublishSettings,
+  Compile / doc / sources := List(),
+  Test / unmanagedSourceDirectories +=
+    baseDirectory.value / "src" / "test" / s"proto-$protobufVersion",
+  Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
+  libraryDependencies ++= Seq(
+    "com.google.protobuf" % "protobuf-java" % protobufVersion
   )
-  .dependsOn(
-    core
-  )
+).dependsOn(
+  core
+)
 
 lazy val proto3Test: Project = Project(
   "proto3test",
   file("proto3test")
-).enablePlugins(ProtobufPlugin)
-  .settings(
-    commonSettings ++ protoSettings ++ noPublishSettings,
-    Compile / doc / sources := List(),
-    Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
-    ProtobufConfig / protobufProtocOptions ++= Seq("--include_std_types"),
-    if (isProto3) proto3Settings else noProto3Settings
+).settings(
+  commonSettings ++ noPublishSettings,
+  Test / unmanagedSourceDirectories +=
+    baseDirectory.value / "src" / "test" / s"proto-$protobufVersion",
+  Compile / doc / sources := List(),
+  Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
+  libraryDependencies ++= Seq(
+    "com.google.protobuf" % "protobuf-java" % protobufVersion,
+    "com.google.protobuf" % "protobuf-java-util" % protobufVersion % "test"
   )
-  .dependsOn(
-    core
-  )
+).dependsOn(
+  core
+)
 
 lazy val jmh: Project = Project(
   "jmh",
   file("jmh")
 ).enablePlugins(JmhPlugin)
   .settings(
-    commonSettings ++ noProto3Settings,
+    commonSettings,
     Jmh / sourceDirectory := (Test / sourceDirectory).value,
     Jmh / classDirectory := (Test / classDirectory).value,
     Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
     // rewire tasks, so that 'jmh:run' automatically invokes 'jmh:compile'
     // (otherwise a clean 'jmh:run' would fail)
     Jmh / compile := (Jmh / compile).dependsOn(Test / compile).value,
-    Jmh / run := (Jmh / run).dependsOn(Jmh / compile).evaluated
+    Jmh / run := (Jmh / run).dependsOn(Jmh / compile).evaluated,
+    test := {}
   )
   .dependsOn(
     proto2Test % "test->test",
     proto3Test % "test->test"
   )
-
-val proto3Settings = Seq(
-  libraryDependencies ++= Seq(
-    "com.google.protobuf" % "protobuf-java-util" % protobufVersion % "test"
-  )
-)
-val noProto3Settings = Seq(
-  test := {}
-)
