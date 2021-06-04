@@ -27,6 +27,10 @@ esac
 
 ARCH=$(uname -m)
 
+if [ "$OS" == "osx" ] && [ "$ARCH" == "arm64" ]; then
+    ARCH=x86_64
+fi
+
 PREFIX="https://github.com/protocolbuffers/protobuf/releases/download"
 ZIP="protoc-$VERSION-$OS-$ARCH.zip"
 URL="$PREFIX/v$VERSION/$ZIP"
