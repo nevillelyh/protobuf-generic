@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
     echo "Usage: protoc.sh VERSION [ARG]..."
     exit 1
 fi
@@ -31,16 +31,28 @@ if [ "$OS" == "osx" ] && [ "$ARCH" == "arm64" ]; then
     ARCH=x86_64
 fi
 
-PREFIX="https://github.com/protocolbuffers/protobuf/releases/download"
-ZIP="protoc-$VERSION-$OS-$ARCH.zip"
-URL="$PREFIX/v$VERSION/$ZIP"
 PROTOC_DIR="$CACHE/$VERSION"
+ARCHIVES="$CACHE/archives"
+PREFIX="https://github.com/protocolbuffers/protobuf/releases/download"
 
-if [ ! -d "$PROTOC_DIR" ]; then
-    ARCHIVES="$CACHE/archives"
-    mkdir -p "$ARCHIVES"
-    curl -sL "$URL" -o "$ARCHIVES/$ZIP"
-    unzip "$ARCHIVES/$ZIP" -d "$PROTOC_DIR"
+echo $VERSION
+if [[ "$VERSION" = 2\.* ]]; then
+    BZ2="protobuf-$VERSION.tar.bz2"
+    URL="$PREFIX/v$VERSION/$BZ2"
+    if [ ! -d "$PROTOC_DIR" ]; then
+        mkdir -p "$PROTOC_DIR"
+        echo $URL
+        curl -sL "$URL" | tar -xzf -C $PROTOC_DIR -
+    fi
+else
+    ZIP="protoc-$VERSION-$OS-$ARCH.zip"
+    URL="$PREFIX/v$VERSION/$ZIP"
+    if [ ! -d "$PROTOC_DIR" ]; then
+        mkdir -p "$ARCHIVES"
+        curl -sL "$URL" -o "$ARCHIVES/$ZIP"
+        unzip "$ARCHIVES/$ZIP" -d "$PROTOC_DIR"
+    fi
 fi
 
+exit
 "$PROTOC_DIR/bin/protoc" $*
