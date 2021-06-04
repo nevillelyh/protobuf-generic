@@ -1,4 +1,5 @@
 val protobufVersion = sys.env.get("PROTO").getOrElse("3.17.2")
+val isProto3 = protobufVersion.startsWith("3.")
 
 val jacksonVersion = "2.12.3"
 val jsr305Version = "3.0.2"
@@ -96,9 +97,9 @@ lazy val proto3Test: Project = Project(
   Compile / doc / sources := List(),
   Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
   libraryDependencies ++= Seq(
-    "com.google.protobuf" % "protobuf-java" % protobufVersion,
-    "com.google.protobuf" % "protobuf-java-util" % protobufVersion % "test"
-  )
+    "com.google.protobuf" % "protobuf-java" % protobufVersion
+  ),
+  if (isProto3) testProto3Settings else skipProto3Settings
 ).dependsOn(
   core
 )
@@ -122,3 +123,12 @@ lazy val jmh: Project = Project(
     proto2Test % "test->test",
     proto3Test % "test->test"
   )
+
+val testProto3Settings = Seq(
+  libraryDependencies ++= Seq(
+    "com.google.protobuf" % "protobuf-java-util" % protobufVersion % "test"
+  )
+)
+val skipProto3Settings = Seq(
+  test := {}
+)
