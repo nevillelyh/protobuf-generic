@@ -41,9 +41,11 @@ if [[ "$VERSION" = 2\.* ]]; then
         BZ2="protobuf-$VERSION.tar.bz2"
         URL="$PREFIX/v$VERSION/$BZ2"
         curl -sL "$URL" | tar -xjf - -C "$PROTOC_DIR"
+        CWD=$(pwd)
         cd "$PROTOC_DIR/protobuf-$VERSION"
         ./configure
         make
+        cd "$CWD"
     fi
     SRC_DIR="$PROTOC_DIR/protobuf-$VERSION/src"
     PROTOC="$SRC_DIR/protoc"
