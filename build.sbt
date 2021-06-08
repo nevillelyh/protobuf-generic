@@ -86,18 +86,18 @@ lazy val protocSettings = Seq(
     src.foreach(logger.info(_))
 
     dst.mkdirs()
-    val out = new StringBuilder
-    val err = new StringBuilder
     val cmd = Seq(sh.toString, protobufVersion, s"-I$pwd", s"--java_out=$dst") ++ src
     import scala.sys.process._
-    val p = cmd.run(ProcessLogger(l => out ++= l, l => err ++= l))
-    logger.info(out.toString())
-    if (p.exitValue != 0) {
-      throw new RuntimeException(err.toString())
+    val err = new StringBuilder
+    System.out.synchronized {
+      val p = cmd.run(ProcessLogger(l => (), l => err ++= l))
+      if (p.exitValue != 0) {
+        throw new RuntimeException(err.toString())
+      }
     }
     (dst ** "*.java").get()
   },
-  Test / sourceGenerators += (Test / protoc).taskValue,
+  Test / sourceGenerators += (Test / protoc).taskValue
 )
 
 lazy val proto2Test: Project = Project(
