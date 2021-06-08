@@ -71,14 +71,42 @@ lazy val core: Project = Project(
   description := "Generic protobuf manipulation"
 )
 
+lazy val protoc = taskKey[Seq[File]]("protoc")
+
+lazy val protocSettings = Seq(
+  Test / protoc / target := (Test / sourceManaged).value / "compiled_protobuf",
+  Test / protoc := {
+    val pwd = (ThisBuild / baseDirectory).value
+    val sh = pwd / "protoc.sh"
+    val src = ((Test / sourceDirectory).value / "protobuf" * "*.proto").get().map(_.toString)
+    val dst = (Test / protoc / target).value
+
+    val logger = ConsoleLogger()
+    logger.info(s"compiling Protobuf to $dst")
+    src.foreach(logger.info(_))
+
+    dst.mkdirs()
+    val cmd = Seq(sh.toString, protobufVersion, s"-I$pwd", s"--java_out=$dst") ++ src
+    import scala.sys.process._
+    val err = new StringBuilder
+    // workaround for race condition in protoc.sh
+    System.out.synchronized {
+      val p = cmd.run(ProcessLogger(l => (), l => err ++= l))
+      if (p.exitValue != 0) {
+        throw new RuntimeException(err.toString())
+      }
+    }
+    (dst ** "*.java").get()
+  },
+  Test / sourceGenerators += (Test / protoc).taskValue
+)
+
 lazy val proto2Test: Project = Project(
   "proto2test",
   file("proto2test")
 ).settings(
-  commonSettings ++ noPublishSettings,
+  commonSettings ++ protocSettings ++ noPublishSettings,
   Compile / doc / sources := List(),
-  Test / unmanagedSourceDirectories +=
-    baseDirectory.value / "src" / "test" / s"proto-$protobufVersion",
   Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
   libraryDependencies ++= Seq(
     "com.google.protobuf" % "protobuf-java" % protobufVersion
@@ -91,9 +119,7 @@ lazy val proto3Test: Project = Project(
   "proto3test",
   file("proto3test")
 ).settings(
-  commonSettings ++ noPublishSettings,
-  Test / unmanagedSourceDirectories +=
-    baseDirectory.value / "src" / "test" / s"proto-$protobufVersion",
+  commonSettings ++ protocSettings ++ noPublishSettings,
   Compile / doc / sources := List(),
   Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
   libraryDependencies ++= Seq(
