@@ -49,7 +49,7 @@ if [[ "$VERSION" = 2\.* ]]; then
     fi
     SRC_DIR="$PROTOC_DIR/protobuf-$VERSION/src"
     PROTOC="$SRC_DIR/protoc"
-    "$PROTOC" -I"$SRC_DIR" -I. $*
+    "$PROTOC" -I"$SRC_DIR" $*
 else
     if [ ! -d "$PROTOC_DIR" ]; then
         mkdir -p "$ARCHIVES"
