@@ -78,7 +78,7 @@ lazy val protocSettings = Seq(
   Test / protoc := {
     val pwd = (ThisBuild / baseDirectory).value
     val sh = pwd / "protoc.sh"
-    val src = ((Test / sourceDirectory).value / "protobuf" * "*.proto").get().map(_.toString)
+    val src = ((Test / sourceDirectory).value / "protobuf" ** "*.proto").get().map(_.toString)
     val dst = (Test / protoc / target).value
 
     val logger = ConsoleLogger()
