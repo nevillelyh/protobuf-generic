@@ -16,16 +16,19 @@ class DefaultBench {
   private val bytes = record.toByteArray
 
   private val reader = GenericReader.of(schema)
-  private val fieldReader = FieldReader.of(schema, Seq(
-    "double_field",
-    "float_field",
-    "int32_field",
-    "int64_field",
-    "bool_field",
-    "string_field",
-    "bytes_field",
-    "color_field",
-  ))
+  private val fieldReader = FieldReader.of(
+    schema,
+    Seq(
+      "double_field",
+      "float_field",
+      "int32_field",
+      "int64_field",
+      "bool_field",
+      "string_field",
+      "bytes_field",
+      "color_field"
+    )
+  )
 
   @Benchmark def readFieldsGeneric: Seq[Any] = {
     val r = reader.read(bytes)
@@ -37,7 +40,8 @@ class DefaultBench {
       r.get("bool_field"),
       r.get("string_field"),
       r.get("bytes_field"),
-      r.get("color_field"))
+      r.get("color_field")
+    )
   }
 
   @Benchmark def readFields: Seq[Any] = fieldReader.read(bytes).toSeq
