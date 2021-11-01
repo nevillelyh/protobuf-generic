@@ -7,8 +7,8 @@ val scalaTestVersion = "3.2.10"
 
 val commonSettings = Seq(
   organization := "me.lyh",
-  scalaVersion := "2.13.6",
-  crossScalaVersions := Seq("2.12.15", "2.13.6"),
+  scalaVersion := "2.13.7",
+  crossScalaVersions := Seq("2.12.15", "2.13.7"),
   scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   Compile / doc / javacOptions := Seq("-source", "1.8"),
