@@ -4,7 +4,7 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, 
 
 object SerializableUtils {
   private def serializeToByteArray(value: Serializable): Array[Byte] = {
-    val buffer = new ByteArrayOutputStream()
+    val buffer = new ByteArrayOutputStream
     val oos = new ObjectOutputStream(buffer)
     oos.writeObject(value)
     buffer.toByteArray

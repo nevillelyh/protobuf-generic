@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 package object generic {
   type GenericRecord = java.util.Map[String, Any]
 
-  private val recordMapper = new ObjectMapper()
+  private val recordMapper = new ObjectMapper
 
   implicit class JsonGenericRecord(val record: GenericRecord) {
     def toJson: String = recordMapper.writeValueAsString(record)

@@ -109,7 +109,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
     while (i < path.length) {
       val name = path(i)
       msgSchema.fields.find(_._2.name == name) match {
-        case Some((id, fd)) =>
+        case Some(id, fd) =>
           require(fd.label != Label.REPEATED, "Repeated field not supported")
           if (i < path.length - 1) {
             require(fd.`type` == Type.MESSAGE, s"Invalid field $field, $name is not a message")

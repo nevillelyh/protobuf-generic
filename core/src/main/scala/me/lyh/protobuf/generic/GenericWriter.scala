@@ -14,7 +14,7 @@ object GenericWriter {
 
 class GenericWriter(val schema: Schema) extends Serializable {
   def write(record: GenericRecord): Array[Byte] = {
-    val baos = new ByteArrayOutputStream()
+    val baos = new ByteArrayOutputStream
     write(record, baos)
     baos.close()
     baos.toByteArray
@@ -38,7 +38,7 @@ class GenericWriter(val schema: Schema) extends Serializable {
       if (field.label == Label.REPEATED) {
         val list = value.asInstanceOf[java.util.ArrayList[Any]]
         if (field.packed) {
-          val baos = new ByteArrayOutputStream()
+          val baos = new ByteArrayOutputStream
           val bytesOut = CodedOutputStream.newInstance(baos)
           list.asScala.foreach(v => writeValue(bytesOut, field, v))
           bytesOut.flush()
@@ -80,7 +80,7 @@ class GenericWriter(val schema: Schema) extends Serializable {
         val enumMap = schema.enums(field.schema.get).values.map(kv => (kv._2, kv._1))
         out.writeEnumNoTag(enumMap(value.toString))
       case Type.MESSAGE =>
-        val baos = new ByteArrayOutputStream()
+        val baos = new ByteArrayOutputStream
         val bytesOut = CodedOutputStream.newInstance(baos)
         write(value.asInstanceOf[GenericRecord], bytesOut, schema.messages(field.schema.get))
         bytesOut.flush()

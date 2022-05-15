@@ -24,7 +24,7 @@ class GenericReader(val schema: Schema) extends Serializable {
     read(CodedInputStream.newInstance(input), schema.root)
 
   private def read(input: CodedInputStream, messageSchema: MessageSchema): GenericRecord = {
-    val map = new JTreeMap[java.lang.Integer, Any]()
+    val map = new JTreeMap[java.lang.Integer, Any]
     while (!input.isAtEnd) {
       val tag = input.readTag()
       val id = WireFormat.getTagFieldNumber(tag)
@@ -32,7 +32,7 @@ class GenericReader(val schema: Schema) extends Serializable {
 
       if (field.label == Label.REPEATED) {
         if (!map.containsKey(id)) {
-          map.put(id, new JArrayList[Any]())
+          map.put(id, new JArrayList[Any])
         }
         val list = map.get(id).asInstanceOf[java.util.ArrayList[Any]]
         if (field.packed) {
@@ -48,7 +48,7 @@ class GenericReader(val schema: Schema) extends Serializable {
       }
     }
 
-    val result = new JLinkedHashMap[String, Any]()
+    val result = new JLinkedHashMap[String, Any]
     map.asScala.foreach(kv => result.put(messageSchema.fields(kv._1).name, kv._2))
     messageSchema.fields.valuesIterator.foreach { f =>
       if (f.default.isDefined && !result.containsKey(f.name)) {

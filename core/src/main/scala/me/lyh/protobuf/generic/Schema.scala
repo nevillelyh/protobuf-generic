@@ -48,8 +48,8 @@ object Schema {
     val messages = Map.newBuilder[String, MessageSchema]
     val enums = Map.newBuilder[String, EnumSchema]
     m.values.foreach {
-      case s: MessageSchema => messages += (s.name -> s)
-      case s: EnumSchema    => enums += (s.name -> s)
+      case s: MessageSchema => messages += s.name -> s
+      case s: EnumSchema    => enums += s.name -> s
     }
     Schema(descriptor.getFullName, messages.result(), enums.result())
   }
@@ -122,7 +122,7 @@ object Schema {
 }
 
 private[generic] object SchemaMapper {
-  private val schemaMapper = new ObjectMapper()
+  private val schemaMapper = new ObjectMapper
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .registerModule(DefaultScalaModule)
 
