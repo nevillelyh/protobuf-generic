@@ -2,8 +2,6 @@
 
 set -euo pipefail
 
-set -x
-
 if [ $# -lt 1 ]; then
     echo "Usage: protoc.sh version [arg]..."
     exit 1
