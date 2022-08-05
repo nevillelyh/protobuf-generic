@@ -33,8 +33,12 @@ esac
 arch=$(uname -m)
 
 # Apple silicon support in 3.20+
-if [[ "$os" == "osx" ]] && [[ "$arch" == "arm64" ]] && [[ "$minor" -lt 20 ]]; then
-    arch=x86_64
+if [[ "$os" == "osx" ]] && [[ "$arch" == "arm64" ]]; then
+    if [[ "$minor" -lt 20 ]]; then
+        arch=x86_64
+    else
+        arch=aarch_64
+    fi
 fi
 
 protoc_dir="$cache/$version"
