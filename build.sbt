@@ -1,4 +1,4 @@
-val protobufVersion = sys.env.get("PROTO").filterNot(_.isEmpty).getOrElse("3.25.0")
+val protobufVersion = sys.env.get("PROTO").filterNot(_.isEmpty).getOrElse("3.25.1")
 val isProto3 = protobufVersion.startsWith("3.")
 
 val jacksonVersion = "2.16.0"
