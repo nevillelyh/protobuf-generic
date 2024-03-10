@@ -1,7 +1,7 @@
 val protobufVersion = sys.env.get("PROTO").filterNot(_.isEmpty).getOrElse("3.25.3")
 val isProto3 = protobufVersion.startsWith("3.")
 
-val jacksonVersion = "2.16.1"
+val jacksonVersion = "2.16.2"
 val jsr305Version = "3.0.2"
 val scalaTestVersion = "3.2.18"
 
