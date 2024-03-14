@@ -1,5 +1,5 @@
-val protobufVersion = sys.env.get("PROTO").filterNot(_.isEmpty).getOrElse("3.25.3")
-val isProto3 = protobufVersion.startsWith("3.")
+val protobufVersion = sys.env.get("PROTO").filterNot(_.isEmpty).getOrElse("4.26.0")
+val isProto3OrAbove = protobufVersion.split('.')(0).toInt >= 3
 
 val jacksonVersion = "2.17.0"
 val jsr305Version = "3.0.2"
@@ -125,7 +125,7 @@ lazy val proto3Test: Project = Project(
   libraryDependencies ++= Seq(
     "com.google.protobuf" % "protobuf-java" % protobufVersion
   ),
-  if (isProto3) testProto3Settings else skipProto3Settings
+  if (isProto3OrAbove) testProto3Settings else skipProto3Settings
 ).dependsOn(
   core
 )

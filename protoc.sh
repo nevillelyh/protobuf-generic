@@ -50,7 +50,7 @@ if [[ "$major" = "2" ]]; then
         mkdir -p "$protoc_dir"
         BZ2="protobuf-$version.tar.bz2"
         URL="$prefix/v$version/$BZ2"
-        curl -sL "$URL" | tar -xjf - -C "$protoc_dir"
+        curl -fssL "$URL" | tar -xjf - -C "$protoc_dir"
         CWD=$(pwd)
         cd "$protoc_dir/protobuf-$version"
         ./configure
@@ -64,12 +64,14 @@ else
     if [[ ! -d "$protoc_dir" ]]; then
         mkdir -p "$archives"
         # Decoupled major versions from languages in 3.21+
-        if [[ "$major" == 3 ]] && [[ "$minor" -ge 21 ]]; then
+        if [[ "$major" -eq 3 ]] && [[ "$minor" -ge 21 ]]; then
+            version="$minor.$patch"
+        elif [[ "$major" -gt 3 ]]; then
             version="$minor.$patch"
         fi
         ZIP="protoc-$version-$os-$arch.zip"
         URL="$prefix/v$version/$ZIP"
-        curl -sL "$URL" -o "$archives/$ZIP"
+        curl -fssL "$URL" -o "$archives/$ZIP"
         unzip "$archives/$ZIP" -d "$protoc_dir"
     fi
     protoc="$protoc_dir/bin/protoc"
