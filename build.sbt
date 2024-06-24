@@ -3,7 +3,7 @@ val isProto3OrAbove = protobufVersion.split('.')(0).toInt >= 3
 
 val jacksonVersion = "2.17.1"
 val jsr305Version = "3.0.2"
-val scalaTestVersion = "3.2.18"
+val scalaTestVersion = "3.2.19"
 
 val commonSettings = Seq(
   organization := "me.lyh",
