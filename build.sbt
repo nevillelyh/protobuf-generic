@@ -1,4 +1,4 @@
-val protobufVersion = sys.env.get("PROTO").filterNot(_.isEmpty).getOrElse("4.29.2")
+val protobufVersion = sys.env.get("PROTO").filterNot(_.isEmpty).getOrElse("4.29.3")
 val isProto3OrAbove = protobufVersion.split('.')(0).toInt >= 3
 
 val jacksonVersion = "2.18.2"
@@ -7,8 +7,8 @@ val scalaTestVersion = "3.2.19"
 
 val commonSettings = Seq(
   organization := "me.lyh",
-  scalaVersion := "2.13.15",
-  crossScalaVersions := Seq("2.12.20", "2.13.15"),
+  scalaVersion := "2.13.16",
+  crossScalaVersions := Seq("2.12.20", "2.13.16"),
   scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   Compile / doc / javacOptions := Seq("-source", "1.8"),
