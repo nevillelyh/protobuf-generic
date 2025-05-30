@@ -75,7 +75,7 @@ class GenericReader(val schema: Schema) extends Serializable {
     case Type.STRING   => in.readString()
     case Type.BYTES    => Base64.encode(in.readByteArray())
     case Type.ENUM     => schema.enums(field.schema.get).values(in.readEnum())
-    case Type.MESSAGE =>
+    case Type.MESSAGE  =>
       val nestedIn = CodedInputStream.newInstance(in.readByteBuffer())
       read(nestedIn, schema.messages(field.schema.get))
     case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
