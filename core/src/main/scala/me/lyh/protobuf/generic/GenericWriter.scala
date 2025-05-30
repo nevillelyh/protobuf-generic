@@ -74,7 +74,7 @@ class GenericWriter(val schema: Schema) extends Serializable {
       case Type.SINT64   => out.writeSInt64NoTag(value.toString.toLong)
       case Type.BOOL     => out.writeBoolNoTag(value.toString.toBoolean)
       case Type.STRING   => out.writeStringNoTag(value.toString)
-      case Type.BYTES =>
+      case Type.BYTES    =>
         out.writeByteArrayNoTag(Base64.decode(value.toString))
       case Type.ENUM =>
         val enumMap = schema.enums(field.schema.get).values.map(kv => (kv._2, kv._1))

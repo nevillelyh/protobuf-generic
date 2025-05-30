@@ -76,7 +76,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
     case Type.SINT64   => in.readSInt64()
     case Type.BOOL     => in.readBool()
     case Type.STRING   => in.readString()
-    case Type.BYTES =>
+    case Type.BYTES    =>
       if (discard) {
         in.skipRawBytes(in.readRawVarint32())
         null
@@ -128,7 +128,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
 
   private def getDefault(field: Field): Any = field.default match {
     case Some(v) => v
-    case None =>
+    case None    =>
       field.`type` match {
         case Type.FLOAT    => 0.0f
         case Type.DOUBLE   => 0.0
