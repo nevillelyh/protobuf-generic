@@ -13,6 +13,9 @@ object GenericWriter {
 }
 
 class GenericWriter(val schema: Schema) extends Serializable {
+  @transient private var fieldMapCache =
+    scala.collection.concurrent.TrieMap.empty[String, Map[String, Field]]
+
   def write(record: GenericRecord): Array[Byte] = {
     val baos = new ByteArrayOutputStream()
     write(record, baos)
@@ -31,7 +34,10 @@ class GenericWriter(val schema: Schema) extends Serializable {
     output: CodedOutputStream,
     messageSchema: MessageSchema
   ): Unit = {
-    val fieldMap = messageSchema.fields.map(kv => (kv._2.name, kv._2))
+    val fieldMap = fieldMapCache.getOrElseUpdate(
+      messageSchema.name,
+      messageSchema.fields.map { case (_, field) => field.name -> field }
+    )
     record.asScala.foreach { case (key, value) =>
       val field = fieldMap(key)
       val wt = wireType(field.`type`)
@@ -118,6 +124,7 @@ class GenericWriter(val schema: Schema) extends Serializable {
     val schemaField = getClass.getDeclaredField("schema")
     schemaField.setAccessible(true)
     schemaField.set(this, schema)
+    fieldMapCache = scala.collection.concurrent.TrieMap.empty
   }
 
   private def writeObject(out: ObjectOutputStream): Unit =
