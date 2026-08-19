@@ -9,6 +9,14 @@ protobuf-generic
 
 Manipulate [Protocol Buffers](https://developers.google.com/protocol-buffers/) schemas and records in a generic manner without compiled classes, similar to [Avro](https://avro.apache.org/)'s `GenericRecord`.
 
+# Compatibility
+
+Supported `protobuf-java` versions:
+
+- 2.6.1
+- 3.19.0+
+- 4.x
+
 # Usage
 
 ```scala

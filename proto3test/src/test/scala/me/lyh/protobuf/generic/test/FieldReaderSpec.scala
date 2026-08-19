@@ -1,5 +1,8 @@
 package me.lyh.protobuf.generic.test
 
+import java.io.ByteArrayInputStream
+import java.nio.ByteBuffer
+
 import com.google.protobuf.{ByteString, Message}
 import me.lyh.protobuf.generic._
 import me.lyh.protobuf.generic.proto3.Schemas._
@@ -81,5 +84,30 @@ class FieldReaderSpec extends AnyFlatSpec with Matchers {
 
     val expectedEmpty = List(0.0, "", ByteString.EMPTY, "BLACK")
     read[Nested](Records.nestedEmpty, fields, expectedEmpty)
+  }
+
+  it should "read explicit presence" in {
+    val schema = Schema.of[Presence]
+    val fields =
+      List("explicit_field", "implicit_field", "oneof_field", "message_field.explicit_field")
+    val reader = SerializableUtils.ensureSerializable(
+      FieldReader.of(Schema.fromJson(schema.toJson), fields)
+    )
+
+    reader.read(Presence.getDefaultInstance.toByteArray).toList shouldBe List(0, 0, 0, 0)
+    reader.readWithPresence(Presence.getDefaultInstance.toByteArray).toList shouldBe
+      List(None, 0, None, None)
+
+    val present = Presence
+      .newBuilder()
+      .setExplicitField(0)
+      .setImplicitField(0)
+      .setOneofField(0)
+      .setMessageField(Presence.newBuilder().setExplicitField(0))
+      .build()
+    val expected = List(Some(0), 0, Some(0), Some(0))
+    reader.readWithPresence(present.toByteArray).toList shouldBe expected
+    reader.readWithPresence(ByteBuffer.wrap(present.toByteArray)).toList shouldBe expected
+    reader.readWithPresence(new ByteArrayInputStream(present.toByteArray)).toList shouldBe expected
   }
 }
