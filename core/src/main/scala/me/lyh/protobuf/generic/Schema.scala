@@ -127,7 +127,9 @@ object Schema {
     try {
       classOf[FieldDescriptor].getMethod("hasPresence").invoke(fd).asInstanceOf[Boolean]
     } catch {
-      case _: NoSuchMethodException => true // Protobuf 2.x only supports explicit presence.
+      // The only supported runtime without a public hasPresence method is Protobuf 2.6.1,
+      // where all optional fields have explicit presence. Proto3 runtimes before 3.19 are unsupported.
+      case _: NoSuchMethodException => true
     }
 
   private[generic] def optionMap(options: MessageOrBuilder): Option[Map[String, String]] = {
