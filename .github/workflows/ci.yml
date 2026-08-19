@@ -49,7 +49,7 @@ jobs:
         proto:
           - 2.6.1
           - 3.25.9
-          - 4.35.1
+          - ~
 
   coverage:
     runs-on: ubuntu-latest
