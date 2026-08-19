@@ -11,9 +11,9 @@ object FieldReader {
 }
 
 class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializable {
-  private val (idxMap, defaults) = {
+  private val (idxMap, defaults, presences) = {
     val xs = fields.map(prepareField)
-    (xs.map(_._1).zipWithIndex.toMap, xs.map(_._2))
+    (xs.map(_._1).zipWithIndex.toMap, xs.map(_._2), xs.map(_._3))
   }
 
   def read(buf: Array[Byte]): Array[Any] = read(CodedInputStream.newInstance(buf))
@@ -22,9 +22,29 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
 
   def read(input: InputStream): Array[Any] = read(CodedInputStream.newInstance(input))
 
+  def readWithPresence(buf: Array[Byte]): Array[Any] =
+    readWithPresence(CodedInputStream.newInstance(buf))
+
+  def readWithPresence(buf: ByteBuffer): Array[Any] =
+    readWithPresence(CodedInputStream.newInstance(buf))
+
+  def readWithPresence(input: InputStream): Array[Any] =
+    readWithPresence(CodedInputStream.newInstance(input))
+
   private def read(input: CodedInputStream): Array[Any] = {
     val result = defaults.toArray
-    read(input, schema.root, Nil, result)
+    read(input, schema.root, Nil, result, false)
+    result
+  }
+
+  private def readWithPresence(input: CodedInputStream): Array[Any] = {
+    val result = defaults
+      .zip(presences)
+      .map { case (default, presence) =>
+        if (presence) None else default
+      }
+      .toArray
+    read(input, schema.root, Nil, result, true)
     result
   }
 
@@ -32,7 +52,8 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
     input: CodedInputStream,
     messageSchema: MessageSchema,
     ids: List[Int],
-    result: Array[Any]
+    result: Array[Any],
+    withPresence: Boolean
   ): Unit = {
     while (!input.isAtEnd) {
       val tag = input.readTag()
@@ -43,14 +64,16 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
         if (field.packed) {
           val bytesIn = CodedInputStream.newInstance(input.readByteBuffer())
           while (!bytesIn.isAtEnd) {
-            readValue(bytesIn, field, ids, result, true)
+            readValue(bytesIn, field, ids, result, true, withPresence)
           }
         } else {
-          readValue(input, field, ids, result, true)
+          readValue(input, field, ids, result, true, withPresence)
         }
       } else {
-        val value = readValue(input, field, ids, result, false)
-        idxMap.get(id :: ids).foreach(i => result(i) = value)
+        val value = readValue(input, field, ids, result, false, withPresence)
+        idxMap.get(id :: ids).foreach { i =>
+          result(i) = if (withPresence && presences(i)) Some(value) else value
+        }
       }
     }
   }
@@ -60,7 +83,8 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
     field: Field,
     ids: List[Int],
     result: Array[Any],
-    discard: Boolean
+    discard: Boolean,
+    withPresence: Boolean
   ): Any = field.`type` match {
     case Type.FLOAT    => in.readFloat()
     case Type.DOUBLE   => in.readDouble()
@@ -92,7 +116,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
         null
       } else {
         val nestedIn = CodedInputStream.newInstance(in.readByteBuffer())
-        read(nestedIn, schema.messages(field.schema.get), field.id :: ids, result)
+        read(nestedIn, schema.messages(field.schema.get), field.id :: ids, result, withPresence)
       }
     case Type.GROUP => throw new IllegalArgumentException("Unsupported type: GROUP")
   }
@@ -100,12 +124,13 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
   /**
    * Field path e.g. "a.b.c" to reverse ids e.g. `3 :: 2 :: 1 :: Nil` and default value.
    */
-  private def prepareField(field: String): (List[Int], Any) = {
+  private def prepareField(field: String): (List[Int], Any, Boolean) = {
     val path = field.split('.')
     var ids = List.empty[Int]
     var msgSchema = schema.root
     var i = 0
     var default: Any = null
+    var presence = false
     while (i < path.length) {
       val name = path(i)
       msgSchema.fields.find(_._2.name == name) match {
@@ -116,6 +141,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
             msgSchema = schema.messages(fd.schema.get)
           } else {
             default = getDefault(fd)
+            presence = Schema.hasPresence(fd)
           }
           ids = id :: ids
         case None =>
@@ -123,7 +149,7 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
       }
       i += 1
     }
-    (ids, default)
+    (ids, default, presence)
   }
 
   private def getDefault(field: Field): Any = field.default match {
@@ -163,12 +189,13 @@ class FieldReader(val schema: Schema, val fields: Seq[String]) extends Serializa
     set("schema", schema)
     set("fields", fields)
 
-    val (idxMap, defaults) = {
+    val (idxMap, defaults, presences) = {
       val xs = fields.map(prepareField)
-      (xs.map(_._1).zipWithIndex.toMap, xs.map(_._2))
+      (xs.map(_._1).zipWithIndex.toMap, xs.map(_._2), xs.map(_._3))
     }
     set("idxMap", idxMap)
     set("defaults", defaults)
+    set("presences", presences)
   }
 
   private def writeObject(out: ObjectOutputStream): Unit = {

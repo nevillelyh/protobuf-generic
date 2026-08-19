@@ -32,6 +32,15 @@ message Optional {
     Color color_field = 16;
 }
 
+message Presence {
+    optional int32 explicit_field = 1;
+    int32 implicit_field = 2;
+    oneof choice {
+        int32 oneof_field = 3;
+    }
+    Presence message_field = 4;
+}
+
 message Repeated {
     repeated double double_field = 1;
     repeated float float_field = 2;

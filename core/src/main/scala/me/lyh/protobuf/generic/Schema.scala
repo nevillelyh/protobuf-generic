@@ -40,7 +40,12 @@ case class Field(
 )
 
 object Schema {
+  private val PresenceOption = "me.lyh.protobuf.generic.hasPresence"
+
   def fromJson(json: String): Schema = SchemaMapper.fromJson(json)
+
+  private[generic] def hasPresence(field: Field): Boolean =
+    field.options.exists(_.contains(PresenceOption))
 
   def of[T <: Message: ClassTag]: Schema = {
     val descriptor = ProtobufType[T].descriptor
@@ -73,7 +78,12 @@ object Schema {
         } else {
           None
         }
-        val fieldOpts = optionMap(fd.getOptions)
+        val options = optionMap(fd.getOptions)
+        val fieldOpts = if (getLabel(fd) == Label.OPTIONAL && hasPresence(fd)) {
+          Some(options.getOrElse(Map.empty) + (PresenceOption -> "true"))
+        } else {
+          options
+        }
         val f =
           Field(
             fd.getNumber,
@@ -112,6 +122,13 @@ object Schema {
     case LABEL_OPTIONAL => Label.OPTIONAL
     case LABEL_REPEATED => Label.REPEATED
   }
+
+  private def hasPresence(fd: FieldDescriptor): Boolean =
+    try {
+      classOf[FieldDescriptor].getMethod("hasPresence").invoke(fd).asInstanceOf[Boolean]
+    } catch {
+      case _: NoSuchMethodException => true // Protobuf 2.x only supports explicit presence.
+    }
 
   private[generic] def optionMap(options: MessageOrBuilder): Option[Map[String, String]] = {
     val optionsMap = options.getAllFields.asScala.foldLeft(Map.empty[String, String]) {

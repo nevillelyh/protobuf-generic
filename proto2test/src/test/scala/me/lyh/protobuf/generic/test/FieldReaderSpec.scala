@@ -65,6 +65,13 @@ class FieldReaderSpec extends AnyFlatSpec with Matchers {
       fields,
       List(0.0, 0.0f, 0, 0L, 0, 0L, 0, 0L, 0, 0L, 0, 0L, false, "", ByteString.EMPTY, "BLACK")
     )
+
+    val reader = FieldReader.of(Schema.of[Optional], List("int32_field"))
+    reader.readWithPresence(Records.optionalEmpty.toByteArray).toList shouldBe List(None)
+    reader
+      .readWithPresence(Optional.newBuilder().setInt32Field(0).build().toByteArray)
+      .toList shouldBe
+      List(Some(0))
   }
 
   it should "read oneofs" in {

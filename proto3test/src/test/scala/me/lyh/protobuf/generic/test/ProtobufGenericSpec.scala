@@ -57,6 +57,26 @@ class ProtobufGenericSpec extends AnyFlatSpec with Matchers {
     test[Optional](Records.optionalEmpty)
   }
 
+  it should "write explicit presence" in {
+    val writer = GenericWriter.of(Schema.fromJson(Schema.of[Presence].toJson))
+    val record = new java.util.HashMap[String, Any]()
+
+    Presence.parseFrom(writer.write(record)).hasExplicitField shouldBe false
+
+    record.put("explicit_field", 0)
+    Presence.parseFrom(writer.write(record)).hasExplicitField shouldBe true
+
+    record.put("explicit_field", None)
+    Presence.parseFrom(writer.write(record)).hasExplicitField shouldBe false
+
+    record.put("explicit_field", Some(0))
+    Presence.parseFrom(writer.write(record)).hasExplicitField shouldBe true
+
+    record.clear()
+    record.put("message_field", new java.util.HashMap[String, Any]())
+    Presence.parseFrom(writer.write(record)).hasMessageField shouldBe true
+  }
+
   it should "round trip repeated" in {
     test[Repeated](Records.repeated)
     test[Repeated](Records.repeatedEmpty)

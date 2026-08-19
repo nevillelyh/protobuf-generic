@@ -41,8 +41,15 @@ class GenericWriter(val schema: Schema) extends Serializable {
     record.asScala.foreach { case (key, value) =>
       val field = fieldMap(key)
       val wt = wireType(field.`type`)
-      if (field.label == Label.REPEATED) {
-        val list = value.asInstanceOf[java.util.ArrayList[Any]]
+      val (fieldValue, explicit) = value match {
+        case None    => (null, false)
+        case Some(v) => (v, true)
+        case v       => (v, false)
+      }
+      if (fieldValue == null) {
+        ()
+      } else if (field.label == Label.REPEATED) {
+        val list = fieldValue.asInstanceOf[java.util.ArrayList[Any]]
         if (field.packed) {
           val baos = new ByteArrayOutputStream()
           val bytesOut = CodedOutputStream.newInstance(baos)
@@ -56,9 +63,9 @@ class GenericWriter(val schema: Schema) extends Serializable {
           }
         }
       } else {
-        if (!field.default.contains(value)) {
+        if (explicit || !field.default.contains(fieldValue)) {
           output.writeTag(field.id, wt)
-          writeValue(output, field, value)
+          writeValue(output, field, fieldValue)
         }
       }
     }

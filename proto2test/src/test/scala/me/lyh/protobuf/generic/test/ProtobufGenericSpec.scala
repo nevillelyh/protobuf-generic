@@ -67,6 +67,18 @@ class ProtobufGenericSpec extends AnyFlatSpec with Matchers {
     roundTrip[CustomDefaults](CustomDefaults.getDefaultInstance)
   }
 
+  it should "write an explicitly present default" in {
+    val writer = GenericWriter.of(Schema.fromJson(Schema.of[CustomDefaults].toJson))
+    val record = new java.util.HashMap[String, Any]()
+    record.put("int32_field", 103)
+
+    CustomDefaults.parseFrom(writer.write(record)).hasInt32Field shouldBe false
+
+    record.put("int32_field", Some(103))
+
+    CustomDefaults.parseFrom(writer.write(record)).hasInt32Field shouldBe true
+  }
+
   it should "populate default values" in {
     val schema = Schema.of[CustomDefaults]
     val record = GenericReader.of(schema).read(CustomDefaults.getDefaultInstance.toByteArray)
