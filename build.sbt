@@ -25,12 +25,11 @@ val commonSettings = Seq(
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle := true,
   Test / publishArtifact := false,
-  sonatypeProfileName := "me.lyh",
-  licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url("https://github.com/nevillelyh/protobuf-generic")),
+  licenses := Seq(License.Apache2),
+  homepage := Some(uri("https://github.com/nevillelyh/protobuf-generic")),
   scmInfo := Some(
     ScmInfo(
-      url("https://github.com/nevillelyh/protobuf-generic.git"),
+      uri("https://github.com/nevillelyh/protobuf-generic.git"),
       "scm:git:git@github.com:nevillelyh/protobuf-generic.git"
     )
   ),
@@ -39,7 +38,7 @@ val commonSettings = Seq(
       id = "sinisa_lyh",
       name = "Neville Li",
       email = "neville.lyh@gmail.com",
-      url = url("https://twitter.com/sinisa_lyh")
+      url = uri("https://twitter.com/sinisa_lyh")
     )
   )
 )
@@ -74,7 +73,7 @@ lazy val protoc = taskKey[Seq[File]]("protoc")
 
 lazy val protocSettings = Seq(
   Test / protoc / target := (Test / sourceManaged).value / "compiled_protobuf",
-  Test / protoc := {
+  Test / protoc := Def.uncached {
     val pwd = (ThisBuild / baseDirectory).value
     val sh = pwd / "protoc.sh"
     val src = ((Test / sourceDirectory).value / "protobuf" ** "*.proto").get().map(_.toString)
@@ -91,7 +90,7 @@ lazy val protocSettings = Seq(
     // workaround for race condition in protoc.sh
     System.out.synchronized {
       val p = cmd.run(ProcessLogger(l => (), l => err ++= l))
-      if (p.exitValue != 0) {
+      if (p.exitValue() != 0) {
         throw new RuntimeException(err.toString())
       }
     }
@@ -140,9 +139,9 @@ lazy val jmh: Project = Project(
     Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
     // rewire tasks, so that 'jmh:run' automatically invokes 'jmh:compile'
     // (otherwise a clean 'jmh:run' would fail)
-    Jmh / compile := (Jmh / compile).dependsOn(Test / compile).value,
+    Jmh / compile := Def.uncached((Jmh / compile).dependsOn(Test / compile).value),
     Jmh / run := (Jmh / run).dependsOn(Jmh / compile).evaluated,
-    test := {}
+    test := sbt.protocol.testing.TestResult.Passed
   )
   .dependsOn(
     proto2Test % "test->test",
@@ -155,5 +154,5 @@ val testProto3Settings = Seq(
   )
 )
 val skipProto3Settings = Seq(
-  test := {}
+  test := sbt.protocol.testing.TestResult.Passed
 )
